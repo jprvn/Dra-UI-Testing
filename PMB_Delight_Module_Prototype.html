@@ -1,0 +1,1333 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PMB Delight Module</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="description" content="Internal DRA Homes prototype. Fictional customer data.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23123f37'/%3E%3Ctext x='16' y='22' font-family='Georgia' font-size='16' fill='%23e8c58c' text-anchor='middle'%3ED%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,500;6..72,600&display=swap" rel="stylesheet">
+<style>/* PMB design language — tokens sampled read-only from drap.powersmy.biz on 2026-11-10 */
+:root{
+  --bg:#eef0ea; --card:#fff; --ink:#17201c; --muted:#5d675f; --muted2:#48544d; --line:#e2e1d7;
+  --brand:#123f37; --brand2:#1c5a4e; --brand-ink:#eaf3ee; --brand-soft:#9dc4b6;
+  --gold:#e8c58c; --gold-d:#a5722f;
+  --amber:#b1631a; --amber-bg:#f8ead7; --amber-bd:#ecca86;
+  --red:#a8362f; --red-bg:#f6e2df; --red-bd:#e6b4ae;
+  --green:#1c5a4e; --green-bg:#e3efe8; --green-bd:#b9d6c8; --live:#4fd08a;
+  --blue:#2f5f8a; --blue-bg:#e3ecf5; --blue-bd:#bcd0e4;
+  --grey-bg:#f6f6f2;
+  --serif:"Newsreader","Newsreader Variable",Georgia,serif;
+  --sans:"Inter","Inter Variable",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+  --r:14px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 var(--sans)}
+a{color:var(--brand2);text-decoration:none}
+button{font:inherit;color:inherit;cursor:pointer}
+input,select,textarea{font:inherit;color:var(--ink)}
+h1,h2,h3{font-family:var(--serif);font-weight:600;margin:0;letter-spacing:-.01em}
+h1{font-size:30px} h2{font-size:21px} h3{font-size:16px}
+.muted{color:var(--muted)} .small{font-size:12px} .tiny{font-size:11px}
+.mono{font-family:var(--mono);font-size:12.5px}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.between{justify-content:space-between}
+.grow{flex:1}
+.hidden{display:none!important}
+
+/* top bar */
+.topbar{position:sticky;top:0;z-index:30;height:58px;background:var(--brand);color:var(--brand-ink);display:flex;align-items:center;gap:10px;padding:0 16px}
+.logo{font-family:var(--serif);font-size:24px;font-weight:600;letter-spacing:.02em;margin-right:4px}
+.logo small{font-family:var(--sans);font-size:10px;letter-spacing:.18em;color:var(--brand-soft);margin-left:6px;font-weight:500}
+.who{display:flex;align-items:center;gap:8px;margin-left:8px}
+.avatar{width:30px;height:30px;border-radius:50%;background:var(--gold-d);color:#fff;display:grid;place-items:center;font-size:11px;font-weight:700;flex:none}
+.avatar.g{background:var(--brand2)}
+.who b{display:block;font-size:13px;line-height:1.1}.who span{font-size:11px;color:var(--brand-soft)}
+.tb-pill{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.1);border:0;border-radius:999px;padding:7px 13px;font-size:12.5px;color:var(--brand-ink);white-space:nowrap}
+.tb-pill:hover{background:rgba(255,255,255,.18)}
+.tb-pill .dot{width:6px;height:6px;border-radius:50%;background:var(--live);display:inline-block}
+.tb-search{flex:1;max-width:340px;min-width:140px;background:rgba(255,255,255,.1);border:0;border-radius:999px;padding:8px 14px;color:#fff}
+.tb-search::placeholder{color:var(--brand-soft)}
+.proto-bar{background:var(--gold);color:#3b2a0e;font-size:12.5px;padding:6px 16px;display:flex;gap:12px;align-items:center;flex-wrap:wrap;position:sticky;top:58px;z-index:29}
+.proto-bar b{letter-spacing:.06em}
+.proto-bar select,.proto-bar button{border:1px solid #c79b55;background:#fff6e6;border-radius:8px;padding:3px 8px;font-size:12.5px}
+
+/* shell */
+.shell{display:grid;grid-template-columns:300px 1fr;min-height:calc(100vh - 90px)}
+.side{border-right:1px solid var(--line);padding:16px 14px;position:sticky;top:90px;height:calc(100vh - 90px);overflow:auto;background:var(--bg)}
+.main{padding:22px 34px 80px;min-width:0}
+.pillset{display:inline-flex;flex-wrap:wrap;gap:4px;background:#fff;border:1px solid var(--line);border-radius:999px;padding:3px}
+.pill{border:0;background:transparent;border-radius:999px;padding:5px 11px;font-size:12.5px;color:var(--muted2)}
+.pill.on{background:var(--brand);color:#fff}
+.pill.dis{opacity:.45;cursor:not-allowed}
+.pill .new{font-size:9px;background:var(--gold);color:#3b2a0e;border-radius:6px;padding:1px 4px;margin-left:4px;font-weight:700}
+.subnav{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0 4px}
+.subnav .lbl{width:100%;font-size:10.5px;letter-spacing:.12em;color:var(--muted);text-transform:uppercase;margin-top:8px}
+.chip{border:1px solid var(--line);background:#fff;border-radius:10px;padding:6px 11px;font-size:12.5px;color:var(--ink);display:inline-flex;gap:6px;align-items:center}
+.chip.on{background:var(--brand2);border-color:var(--brand2);color:#fff}
+.chip .n{background:var(--red);color:#fff;border-radius:8px;font-size:10px;padding:0 6px;font-weight:700}
+.chip .n.a{background:var(--amber)}
+.side h3{margin:20px 0 8px;display:flex;justify-content:space-between;align-items:baseline}
+.side h3 a{font-family:var(--sans);font-size:12px;font-weight:500}
+.qitem{background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:8px;cursor:pointer}
+.qitem:hover{border-color:var(--brand-soft)}
+.qitem b{font-size:13px}.qitem .meta{font-size:11.5px;color:var(--muted)}
+
+/* page header */
+.eyebrow{display:inline-block;font-size:10.5px;letter-spacing:.12em;font-weight:600;text-transform:uppercase;background:var(--amber-bg);color:var(--amber);border-radius:999px;padding:4px 10px;margin-bottom:10px}
+.eyebrow.work{background:var(--green-bg);color:var(--green)}
+.eyebrow.mon{background:var(--blue-bg);color:var(--blue)}
+.eyebrow.apr{background:var(--amber-bg);color:var(--amber)}
+.eyebrow.proto{background:#ece6f5;color:#5b3f8c}
+.ph{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:18px;flex-wrap:wrap}
+.ph p{margin:6px 0 0;color:var(--muted);max-width:760px}
+.lede{font-size:18px;color:var(--muted2);margin:4px 0 20px;max-width:820px}
+
+/* cards */
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px 18px}
+.card+.card{margin-top:14px}
+.card h3{margin-bottom:10px}
+.sec-t{font-size:11px;letter-spacing:.12em;font-weight:600;color:var(--muted2);text-transform:uppercase;margin:24px 0 10px}
+.grid{display:grid;gap:14px}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.g5{grid-template-columns:repeat(5,minmax(0,1fr))}
+.kpi{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:14px 16px;cursor:pointer;position:relative;transition:border-color .15s}
+.kpi:hover{border-color:var(--brand2)}
+.kpi .v{font-family:var(--serif);font-size:34px;font-weight:600;color:var(--brand2);line-height:1.1}
+.kpi .l{font-weight:600;margin-top:6px}.kpi .s{font-size:12px;color:var(--muted)}
+.kpi::after{content:"→";position:absolute;right:14px;top:12px;color:#c9c8bc}
+.kpi.amber{background:var(--amber-bg);border-color:var(--amber-bd)}.kpi.amber .v{color:var(--amber)}
+.kpi.red{background:var(--red-bg);border-color:var(--red-bd)}.kpi.red .v{color:var(--red)}
+.kpi.grey{background:var(--grey-bg)}.kpi.grey .v{color:#9a9a90}
+.stat{display:flex;gap:28px;flex-wrap:wrap}
+.stat div span{display:block;font-size:12px;color:var(--muted)}
+.stat div b{font-family:var(--serif);font-size:24px;color:var(--brand2)}
+
+/* tags */
+.tag{display:inline-flex;align-items:center;gap:4px;font-size:10.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;border-radius:6px;padding:2px 7px;background:var(--green-bg);color:var(--green);white-space:nowrap}
+.tag.amber{background:var(--amber-bg);color:var(--amber)}
+.tag.red{background:var(--red-bg);color:var(--red)}
+.tag.blue{background:var(--blue-bg);color:var(--blue)}
+.tag.grey{background:#ececE6;color:var(--muted2)}
+.tag.purple{background:#ece6f5;color:#5b3f8c}
+.tag.solid{background:var(--brand2);color:#fff}
+
+/* tables */
+.tbl-wrap{overflow:auto;border:1px solid var(--line);border-radius:var(--r);background:#fff}
+table{border-collapse:collapse;width:100%}
+th{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-align:left;font-weight:600;padding:10px 12px;border-bottom:1px solid var(--line);background:#fbfbf8;white-space:nowrap;position:sticky;top:0}
+td{padding:10px 12px;border-bottom:1px solid #efeee6;vertical-align:top;font-size:13px}
+tr:last-child td{border-bottom:0}
+tr.click{cursor:pointer} tr.click:hover td{background:#f8faf6}
+td .sub{font-size:11.5px;color:var(--muted)}
+
+/* forms & buttons */
+.btn{border:1px solid var(--line);background:#fff;border-radius:10px;padding:7px 13px;font-size:13px;display:inline-flex;align-items:center;gap:6px}
+.btn:hover{border-color:var(--brand-soft)}
+.btn.pri{background:var(--brand);border-color:var(--brand);color:#fff}
+.btn.pri:hover{background:var(--brand2)}
+.btn.warn{background:var(--amber-bg);border-color:var(--amber-bd);color:var(--amber)}
+.btn.danger{background:var(--red-bg);border-color:var(--red-bd);color:var(--red)}
+.btn.sm{padding:4px 9px;font-size:12px;border-radius:8px}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.filters{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
+.inp,select.inp{border:1px solid var(--line);background:#fff;border-radius:10px;padding:7px 10px;font-size:13px;min-width:0}
+textarea.inp{width:100%;min-height:70px;resize:vertical}
+.form{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form label{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--muted2);font-weight:500}
+.form .full{grid-column:1/-1}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fff}
+.seg button{border:0;background:none;padding:6px 12px;font-size:12.5px}
+.seg button.on{background:var(--brand);color:#fff}
+
+/* timeline */
+.tl{position:relative}
+.tl-i{display:grid;grid-template-columns:34px 1fr;gap:10px;padding:10px 0;border-bottom:1px solid #f0efe7}
+.tl-i:last-child{border-bottom:0}
+.ic{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-size:14px;background:var(--green-bg);color:var(--green)}
+.ic.wa{background:#dff3e6;color:#1d7a45}.ic.em{background:var(--blue-bg);color:var(--blue)}
+.ic.ci{background:var(--amber-bg);color:var(--amber)}.ic.co{background:var(--green-bg);color:var(--green)}
+.ic.mc{background:var(--red-bg);color:var(--red)}.ic.nt{background:#ece6f5;color:#5b3f8c}
+.tl-i .h{display:flex;gap:8px;flex-wrap:wrap;align-items:center;font-size:12px;color:var(--muted)}
+.tl-i .h b{color:var(--ink);font-size:13px}
+.tl-i .b{margin-top:3px}
+.bubble{background:#e7f6ec;border-radius:10px 10px 10px 2px;padding:8px 10px;margin:6px 0;max-width:80%}
+.bubble.me{background:#fff;border:1px solid var(--line);margin-left:auto;border-radius:10px 10px 2px 10px}
+
+/* journey stepper (PMB style) */
+.steps{display:flex;align-items:flex-start;margin:10px 0 4px}
+.st{flex:1;text-align:center;position:relative;font-size:10.5px;color:var(--muted)}
+.st::before{content:"";position:absolute;top:7px;left:-50%;right:50%;height:2px;background:#dcdcd2}
+.st:first-child::before{display:none}
+.st i{display:block;width:16px;height:16px;border-radius:50%;margin:0 auto 4px;background:#e2e1d7;position:relative;z-index:1}
+.st.done i{background:var(--brand2)}.st.done::before{background:var(--brand2)}
+.st.cur i{background:#fff;border:3px solid var(--amber)}.st.cur{color:var(--amber);font-weight:600}
+.st.na{opacity:.5}
+
+/* customer list */
+.split{display:grid;grid-template-columns:330px 1fr;gap:18px;align-items:start}
+.clist{max-height:calc(100vh - 250px);overflow:auto;padding-right:4px}
+.citem{display:flex;gap:10px;align-items:center;background:#fff;border:1px solid var(--line);border-radius:12px;padding:9px 11px;margin-bottom:7px;cursor:pointer}
+.citem.on{border-color:var(--brand2);box-shadow:0 0 0 1px var(--brand2)}
+.citem b{font-size:13px}.citem .meta{font-size:11.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cheat{background:var(--brand);color:var(--brand-ink);border-radius:var(--r);padding:14px 18px}
+.cheat .k{font-size:10.5px;letter-spacing:.14em;color:var(--gold);font-weight:600}
+.cheat p{font-family:var(--serif);font-size:17px;margin:6px 0 0;color:#fff}
+.kv{display:grid;grid-template-columns:150px 1fr;gap:6px 12px;font-size:13px}
+.kv dt{color:var(--muted)}.kv dd{margin:0;min-width:0}.kv .tag{white-space:normal}
+.own{border:1px dashed var(--brand-soft);border-radius:12px;padding:12px;background:#f7fbf8}
+
+/* funnel / bars */
+.bar{height:10px;border-radius:6px;background:#ecebe3;overflow:hidden}
+.bar>i{display:block;height:100%;background:var(--brand2);border-radius:6px}
+.bar.amber>i{background:var(--amber)}
+.fn-row{display:grid;grid-template-columns:150px 1fr 60px;gap:10px;align-items:center;margin:7px 0;font-size:13px}
+
+/* week strip */
+.week{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;margin-bottom:14px}
+.day{background:#fff;border:1px solid var(--line);border-radius:12px;padding:8px 10px;cursor:pointer}
+.day.on{border-color:var(--brand2);box-shadow:0 0 0 1px var(--brand2)}
+.day.today{background:var(--green-bg)}
+.day b{font-family:var(--serif);font-size:20px;color:var(--brand2)}
+.day .dn{font-size:11px;color:var(--muted)}
+
+/* approvals chain */
+.chain{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:8px}
+.ch{font-size:11.5px;border-radius:8px;padding:4px 8px;border:1px solid var(--line);background:#fafaf6}
+.ch.ok{background:var(--green-bg);border-color:var(--green-bd);color:var(--green)}
+.ch.wait{background:var(--amber-bg);border-color:var(--amber-bd);color:var(--amber);font-weight:600}
+.ch.no{background:var(--red-bg);border-color:var(--red-bd);color:var(--red)}
+.arrow{color:#bbb}
+
+/* modal & drawer */
+.ov{position:fixed;inset:0;background:rgba(18,30,26,.45);z-index:50;display:flex;align-items:flex-start;justify-content:center;padding:6vh 16px;overflow:auto}
+.modal{background:#fff;border-radius:18px;width:min(640px,100%);padding:22px 24px;box-shadow:0 20px 60px rgba(0,0,0,.25)}
+.modal.wide{width:min(900px,100%)}
+.modal h2{margin-bottom:4px}
+.modal .acts{display:flex;gap:8px;justify-content:flex-end;margin-top:18px}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(620px,100%);background:#fff;z-index:51;box-shadow:-10px 0 40px rgba(0,0,0,.18);padding:22px 24px;overflow:auto}
+.x{float:right;border:0;background:#f1f0ea;border-radius:50%;width:30px;height:30px}
+.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:var(--brand);color:#fff;padding:10px 18px;border-radius:12px;z-index:80;box-shadow:0 8px 30px rgba(0,0,0,.2);font-size:13px}
+
+/* dev annotations */
+.be{display:none;font-size:10px;font-weight:700;letter-spacing:.04em;background:#ece6f5;color:#5b3f8c;border:1px dashed #a993cf;border-radius:6px;padding:1px 6px;margin-left:6px;vertical-align:middle;white-space:nowrap}
+body.dev .be{display:inline-block}
+.ui{display:none;font-size:10px;font-weight:700;background:#e9f2ec;color:var(--green);border:1px dashed var(--green-bd);border-radius:6px;padding:1px 6px;margin-left:6px;vertical-align:middle}
+body.dev .ui{display:inline-block}
+.fb-fab{position:fixed;right:20px;bottom:20px;z-index:40;background:var(--brand);color:#fff;border:0;border-radius:999px;padding:11px 17px;box-shadow:0 8px 24px rgba(18,63,55,.35);font-weight:600}
+.fb-fab span{background:var(--gold);color:#3b2a0e;border-radius:8px;padding:0 6px;margin-left:6px;font-size:11px}
+.note{background:var(--amber-bg);border:1px solid var(--amber-bd);color:#6b4413;border-radius:12px;padding:10px 14px;font-size:12.5px;margin-bottom:14px}
+.note.info{background:var(--blue-bg);border-color:var(--blue-bd);color:#284c6e}
+.note.green{background:var(--green-bg);border-color:var(--green-bd);color:var(--green)}
+.empty{padding:28px;text-align:center;color:var(--muted)}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin-bottom:14px;flex-wrap:wrap}
+.tabs button{border:0;background:none;padding:8px 12px;font-size:13px;color:var(--muted2);border-bottom:2px solid transparent;margin-bottom:-1px}
+.tabs button.on{color:var(--brand);border-bottom-color:var(--brand);font-weight:600}
+.ck{display:flex;gap:8px;align-items:center;font-size:13px;padding:4px 0}
+.ck input{accent-color:var(--brand2)}
+@media (max-width:1100px){.g4,.g5{grid-template-columns:repeat(2,1fr)}.g3{grid-template-columns:repeat(2,1fr)}.split{grid-template-columns:1fr}}
+@media (max-width:860px){.shell{grid-template-columns:1fr}.side{position:static;height:auto}.main{padding:16px}.g2,.g3{grid-template-columns:1fr}.who,.tb-search{display:none}}
+@media print{.topbar,.proto-bar,.side,.fb-fab,.filters,.btn{display:none!important}.shell{display:block}}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="logo">DRA<small>COMMS PLATFORM</small></div>
+  <div class="who" id="who"></div>
+  <button class="tb-pill" id="ext"></button>
+  <button class="tb-pill" id="bell" title="Approvals">🔔</button>
+  <button class="tb-pill" title="Data freshness (demo)">Data <span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></button>
+  <button class="tb-pill" id="fbTop">💬 Feedback</button>
+  <input class="tb-search" id="gsearch" placeholder="⌕ Search name, phone, unit or BOF… ↵">
+  <button class="tb-pill" id="newBtn">＋ New activity</button>
+  <button class="tb-pill" id="logout">⇥ Log out</button>
+</header>
+<div class="proto-bar">
+  <b>INTERNAL PROTOTYPE · FICTIONAL CUSTOMER DATA</b><span>DRA Homes Delight Team module for PMB. Not connected to PMB, MCube, Gallabox, Workhall or ERP, and nothing is sent. Feedback stays in your browser.</span>
+  <span class="grow"></span>
+  <label>View as <select id="asUser"></select></label>
+  <label><input type="checkbox" id="devToggle"> Dev notes</label>
+  <button id="resetBtn">Reset demo data</button>
+</div>
+<div class="shell"><aside class="side" id="side"></aside><main class="main" id="main"></main></div>
+<button class="fb-fab" id="fbFab">💬 Feedback <span id="fbCount">0</span></button>
+<script>/* ===== DEMO DATA — fictional customers, units and phone numbers. Staff names and roles mirror PMB's user list (read 2026-11-10). ===== */
+const TODAY = (()=>{const d=new Date();d.setHours(0,0,0,0);return d;})();
+function iso(d){const z=n=>String(n).padStart(2,'0');return `${d.getFullYear()}-${z(d.getMonth()+1)}-${z(d.getDate())}`;}
+function D(off,time){const d=new Date(TODAY);d.setDate(d.getDate()+off);return iso(d)+(time?'T'+time:'');}
+function MD(off){const d=new Date(TODAY);d.setDate(d.getDate()+off);return d;}
+
+const PEOPLE = [
+  {id:'rekha',  name:'Rekha',          role:'member',  ext:'458', title:'Delight Team'},
+  {id:'madhu',  name:'Madhubalan',     role:'member',  ext:'448', title:'Delight Team'},
+  {id:'mani',   name:'Manikandan',     role:'member',  ext:'455', title:'Delight Team'},
+  {id:'varadh', name:'Varadharaj',     role:'member',  ext:'462', title:'Delight Team'},
+  {id:'vignesh',name:'Vigneshwaran',   role:'member',  ext:'502', title:'Delight Team'},
+  {id:'backend',name:'Delight Backend',role:'backend', ext:'—',   title:'Delight Backend (new role)'},
+  {id:'head',   name:'Delight Head',   role:'head',    ext:'—',   title:'Delight Head (new role)'},
+  {id:'crm',    name:'CRM Head / CSMO',role:'crm',     ext:'—',   title:'CRM Head / CSMO'},
+  {id:'admin',  name:'Admin',          role:'admin',   ext:'—',   title:'Admin'}
+];
+const MEMBERS = PEOPLE.filter(p=>p.role==='member').map(p=>p.id);
+const ROLE_LABEL = {member:'Delight Member',backend:'Delight Backend',head:'Delight Head',crm:'CRM Head / CSMO',admin:'Admin'};
+const RMS = ['Sowmiya D','Hariprabhu','Angel Monesha Rani','Rajalakshmi S','Keerthana G D','Nandhini Monica'];
+
+/* Journey: Delight touchpoints (MoM §1). Not strictly sequential. */
+const JOURNEY = [
+  {k:'firstmeet',   l:'First Meet',        wh:'Customer Delight Team Meeting'},
+  {k:'registration',l:'Registration',      wh:'Sale Deed Registered'},
+  {k:'ji',          l:'Joint Inspection',  wh:'Pre Delivery Inspection'},
+  {k:'handover',    l:'Handover',          wh:'Possession Letter'},
+  {k:'post',        l:'Post-Handover',     wh:'EB / Patta Transfer Applied'}
+];
+const ACT_TYPES = [
+  {k:'firstmeet',l:'First Meet',sla:7,ico:'🤝'},
+  {k:'registration',l:'Registration',sla:3,ico:'📝'},
+  {k:'ji',l:'Joint Inspection',sla:3,ico:'🔍'},
+  {k:'handover',l:'Handover',sla:2,ico:'🔑'},
+  {k:'post',l:'Post-Handover',sla:5,ico:'📄'},
+  {k:'followup',l:'Follow-up',sla:1,ico:'↻'},
+  {k:'birthday',l:'Birthday wish',sla:0,ico:'🎂'},
+  {k:'anniversary',l:'Anniversary wish',sla:0,ico:'💐'},
+  {k:'event',l:'Community event',sla:0,ico:'🎉'},
+  {k:'update',l:'Project update',sla:0,ico:'📣'},
+  {k:'referralcall',l:'Referral call',sla:2,ico:'🗣'}
+];
+const ENGAGE = ['birthday','anniversary','event','update','referralcall'];
+const ACT_STATUS = ['Planned','Confirmed','Completed','Rescheduled','No response','Cancelled'];
+const REQ_CATS = ['Documentation','Registration','Snag / Quality','Handover','Name transfer / EB-Patta','Payment query (→ RM)','Customization (→ Customization desk)','Portal access','Other'];
+const REQ_SOURCES = ['Inbound call','WhatsApp','Email','Customer portal','In person','ERP ticket'];
+const REQ_TEAMS = ['Delight Team','RM / CRM','Technical / Site','Legal','Accounts','Customization','Liaison (EB / Patta)'];
+const REQ_STATUS = ['Open','In progress','Waiting on internal team','Escalated','Resolved','Closed'];
+const REF_STATUS = ['New','Shared with Sales','Contacted','Site visit scheduled','Site visit done','Booked','Dropped'];
+const PAY_STATUS = ['Not due','Requested','Verified','Head approved','CSMO approved','Paid','Rejected'];
+const PROJECTS = ['DRA POLARIS','DRA ASTRA','DRA iHEART','DRA MARINA 100','DRA VENKAT RICHBURG','DRA SKYLANTIS','DRA TRINITY','DRA BEENA CLOVER','DRA COVE','DRA INARA PHASE 2'];
+const WA_TEMPLATES = ['delight_welcome_v2','first_meet_invite','registration_reminder','ji_schedule_confirm','handover_invite','birthday_wish','anniversary_wish','community_event_invite','referral_thanks'];
+
+function seedData(){
+  let ph=0; const phone=()=>'+91 90000 '+String(10101+(ph++)*37).padStart(5,'0');
+  // [name, project, tower, unit, cfg, owner, rm, stageIdx(0-5:5=engagement), extra]
+  const raw = [
+    ['Karthik Ramanathan','DRA POLARIS','TOWER A','1104','3BHK','rekha',0,1,{spouse:'Divya Karthik',dob:0,ann:120}],
+    ['Meenakshi Sundaram','DRA ASTRA','—','605','2BHK','madhu',1,0,{dob:2}],
+    ['Arvind Prasad','DRA iHEART','BLOCK B','908','3BHK','varadh',2,2,{spouse:'Lakshmi Prasad',second:['DRA iHEART','BLOCK B','909','2BHK'],ann:0}],
+    ['Priya Venkatesh','DRA MARINA 100','CORAL','702','3BHK','rekha',3,3,{nri:'Dubai, UAE',dob:40}],
+    ['Suresh Babu K','DRA VENKAT RICHBURG','EBONY','312','2BHK','mani',0,1,{dob:-3}],
+    ['Fathima Begum','DRA SKYLANTIS','BLOCK-2','1003','2BHK','vignesh',4,0,{}],
+    ['Rahul Krishnan','DRA TRINITY','—','702','3BHK','madhu',1,4,{ann:3}],
+    ['Anitha Raghavan','DRA BEENA CLOVER','BLOCK 3','205','2BHK','rekha',4,2,{dob:1}],
+    ['Mohammed Irfan','DRA POLARIS','TOWER B','405','2BHK','mani',3,3,{}],
+    ['Deepa Natarajan','DRA INARA PHASE 2','VILLAS','Villa-41','4BHK','varadh',3,4,{dob:0}],
+    ['Gokul Srinivasan','DRA ASTRA','—','1102','3BHK','vignesh',2,1,{}],
+    ['Revathi Chandrasekar','DRA COVE','—','504','3BHK','rekha',5,5,{ann:-1,dob:200}],
+    ['Vignesh Kumar S','DRA iHEART','BLOCK A','1406','2BHK','madhu',2,0,{}],
+    ['Sangeetha Murali','DRA MARINA 100','CORAL','1201','3BHK','mani',0,2,{dob:5}],
+    ['Balaji Thirumalai','DRA SKYLANTIS','BLOCK-1','802','3BHK','varadh',0,1,{}],
+    ['Nithya Ganesan','DRA TRINITY','—','1005','2BHK','vignesh',1,3,{nri:'Singapore'}],
+    ['Prakash Rao','DRA VENKAT RICHBURG','EBONY','108','2BHK','rekha',0,0,{}],
+    ['Kavitha Selvaraj','DRA COVE','—','302','2BHK','madhu',5,5,{ann:0}],
+    ['Senthil Kumar P','DRA INARA PHASE 2','VILLAS','Villa-12','4BHK','mani',3,4,{}],
+    ['Janani Iyer','DRA POLARIS','TOWER A','1502','3BHK','vignesh',4,2,{dob:9}],
+    ['Harish Chandran','DRA ASTRA','—','905','3BHK','varadh',1,1,{}],
+    ['Lakshmi Narasimhan','DRA BEENA CLOVER','BLOCK 1','402','2BHK','rekha',4,1,{}],
+    ['Ashok Kumar R','DRA COVE','—','707','3BHK','mani',5,5,{dob:-30}],
+    ['Sowmya Raghunathan','DRA MARINA 100','CORAL','305','2BHK','varadh',1,0,{}]
+  ];
+  let bof=1001, cid=0;
+  const customers = raw.map(r=>{
+    const [name,proj,tower,unit,cfg,owner,rmIdx,stage,x]=r; cid++;
+    const id='C'+String(cid).padStart(3,'0');
+    const first=name.split(' ')[0].toLowerCase();
+    const phones=[{label:'Primary',num:phone()}];
+    if(x.spouse) phones.push({label:'Spouse · '+x.spouse.split(' ')[0],num:phone()});
+    if(x.nri) phones.push({label:'NRI · '+x.nri,num:'+971 50 000 '+String(1000+cid)});
+    if(cid%5===0) phones.push({label:'Office',num:phone()});
+    const dobOff = x.dob!==undefined?x.dob:60+cid*11, annOff=x.ann!==undefined?x.ann:null;
+    const md=(o)=>{const d=MD(o);return String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');};
+    const mk=(p,t,u,c,i)=>{
+      const st = stage===5?5:stage;
+      const j={}; JOURNEY.forEach((s,k)=>{ j[s.k]= st===5||k<st?'done':(k===st?'current':'pending'); });
+      return {id:'BOF_D'+(bof++),project:p,tower:t,unit:u,cfg:c,bookedOn:D(-(400-stage*70)-i*3),rm:RMS[rmIdx],whStage:st===5?'Handed Over':JOURNEY[st].wh,journey:j,stageIdx:st,value:(6000000+((cid*7919)%60)*100000)};
+    };
+    const bookings=[mk(proj,tower,unit,cfg,0)];
+    if(x.second) bookings.push(mk(x.second[0],x.second[1],x.second[2],x.second[3],1));
+    return {id,name,phones,emails:[first+'.demo'+cid+'@example.com'],dob:md(dobOff),dobYear:1975+cid%20,anniversary:annOff===null?null:md(annOff),
+      city:x.nri?x.nri:(cid%3?'Chennai':'Coimbatore'),language:cid%4===0?'English':'Tamil, English',nri:!!x.nri,
+      owner,cover:null,bookings,prefs:cid%3===0?'Prefers WhatsApp; call after 6 pm':(cid%3===1?'Prefers calls before 11 am':'Email for documents'),
+      notes:[] ,coApplicant:x.spouse||null};
+  });
+  // Temporary cover: Rekha covering for Varadharaj's customer C010 (leave)
+  customers[9].cover={member:'rekha',from:D(-1),to:D(4),reason:'Varadharaj on leave (approved)',approval:'APR-0103'};
+
+  /* ---- Activities ---- */
+  let aid=500; const acts=[];
+  const A=(c,b,type,off,time,status,assignee,remarks,next,extra={})=>{acts.push(Object.assign({id:'ACT-'+(aid++),cust:c.id,booking:b.id,type,date:D(off),time,mode:extra.mode||(type==='firstmeet'&&c.nri?'Virtual':'In person'),assignee,status,remarks,next:next===null?null:(next!==undefined?D(next):null),source:extra.source||'PMB',created:D(Math.min(off,0)-3),checklist:extra.checklist||null,snags:extra.snags||null,log:[{at:D(Math.min(off,0)-3,'10:00'),by:extra.by||c.owner,text:'Created'}]},{}));};
+  customers.forEach((c,i)=>{
+    const b=c.bookings[0]; const o=c.owner;
+    const st=b.stageIdx;
+    if(st>0) A(c,b,'firstmeet',-300+i,'11:00','Completed',o,'First meet done at site office. Customer briefed on journey, Delight contact shared.',null);
+    if(st>1) A(c,b,'registration',-120+i,'10:30','Completed',o,'Registered at SRO. Hospitality arranged.',null,{checklist:{'ID proofs':true,'Bank NOC':true,'Stamp duty DD':true,'Photos':true,'Witness details':true}});
+    if(st>2) A(c,b,'ji',-40+i%5,'15:00','Completed',o,'JI done with site engineer. 4 snags recorded.',null,{snags:[{t:'Bedroom 2 door alignment',team:'Technical / Site',s:'Closed'},{t:'Kitchen tile hairline crack',team:'Technical / Site',s:'Closed'},{t:'Balcony drain slope',team:'Technical / Site',s:'Closed'},{t:'Switch board loose',team:'Technical / Site',s:'Closed'}]});
+    if(st>3) A(c,b,'handover',-20+i%4,'11:30','Completed',o,'Keys handed over with welcome kit.',null);
+    // current stage activity
+    const pattern=[
+      ['firstmeet',(i%4)-1,'11:00'],['registration',(i%6)-1,'10:30'],['ji',(i%5)-1,'15:00'],['handover',(i%5),'11:30'],['post',(i%7)-2,'12:00']
+    ];
+    if(st<5){
+      const [t,off,tm]=pattern[st];
+      const status= off<0?(i%3===0?'No response':'Confirmed'):(off===0?'Confirmed':(i%2?'Planned':'Confirmed'));
+      const assignee = (i===4)?'rekha':(i===13?'varadh':(c.cover?c.cover.member:o));
+      const rem={firstmeet:'Welcome WhatsApp sent. Appointment for first meet to be confirmed with customer.',registration:'SRO slot requested. Docs checklist shared on WhatsApp.',ji:'Site ready. Inform site engineer + customer, share JI sheet.',handover:'Possession letter issued. Coordinate keys, welcome kit and EB meter reading.',post:'Name transfer / EB / Patta: liaison file submitted, awaiting update.'}[t];
+      const ck = t==='registration'?{'ID proofs':i%2===0,'Bank NOC':i%3!==0,'Stamp duty DD':false,'Photos':true,'Witness details':i%2===1}:null;
+      const sn = t==='ji'&&off<0?[{t:'Living room wall dampness',team:'Technical / Site',s:'Open'},{t:'Master bath tap leak',team:'Technical / Site',s:'Open'}]:null;
+      A(c,b,t,off,tm,status,assignee,rem,off<0?0:off+2,{checklist:ck,snags:sn,source:t==='firstmeet'&&i%2===0?'Workhall task':'PMB',mode:c.nri&&t!=='ji'?'Virtual':undefined});
+    }
+    if(i%3===1) A(c,b,'followup',(i%4)-2,'16:00',(i%4)-2<0?'Planned':'Planned',c.cover?c.cover.member:o,'Call back: customer asked for '+['parking allotment status','registration date options','JI sheet copy','EB name transfer status'][i%4]+'.',null);
+  });
+  // engagement
+  customers.forEach(c=>{
+    const b=c.bookings[0]; const t=iso(TODAY).slice(5);
+    const within=(md)=>{for(let k=-2;k<=7;k++){if(iso(MD(k)).slice(5)===md) return k;}return null;};
+    const bd=within(c.dob); if(bd!==null) A(c,b,'birthday',bd,'09:30',bd<0?'Completed':'Planned',c.cover?c.cover.member:c.owner,'Birthday wish (WhatsApp template birthday_wish + call).',null,{mode:'Phone'});
+    if(c.anniversary){const an=within(c.anniversary); if(an!==null) A(c,b,'anniversary',an,'09:45',an<0?'Completed':'Planned',c.cover?c.cover.member:c.owner,'Anniversary wish.',null,{mode:'Phone'});}
+  });
+  ['C001','C009','C020'].forEach((id,k)=>{const c=customers.find(x=>x.id===id);A(c,c.bookings[0],'event',5,'17:00','Planned',c.owner,'DRA POLARIS community meet — invite + RSVP call.',null,{mode:'In person'});});
+  ['C012','C018','C023'].forEach(id=>{const c=customers.find(x=>x.id===id);A(c,c.bookings[0],'referralcall',id==='C012'?0:1,'12:00','Planned',c.owner,'New launch: ask for referrals in their circle.',null,{mode:'Phone'});});
+  A(customers[2],customers[2].bookings[1],'update',2,'11:00','Planned','varadh','Second booking (909): share construction progress photos.',null,{mode:'Phone'});
+
+  /* ---- Communications ---- */
+  let mid=9000; const comms=[];
+  const M=(c,b,ch,off,time,by,summary,extra={})=>comms.push(Object.assign({id:'MSG-'+(mid++),cust:c.id,booking:b?b.id:null,ch,at:D(off,time),by,summary},extra));
+  customers.forEach((c,i)=>{
+    const b=c.bookings[0], o=c.owner, other=MEMBERS[(MEMBERS.indexOf(o)+1)%MEMBERS.length];
+    M(c,b,'wa',-60+i,'10:05',o,'Template: delight_welcome_v2 — "Welcome to the DRA family!"',{dir:'out',thread:[{me:true,t:'Dear '+c.name.split(' ')[0]+', welcome to the DRA family! I am '+PEOPLE.find(p=>p.id===o).name+' from the Customer Delight team and will be your point of contact after booking.'},{me:false,t:'Thank you! Happy to connect.'}]});
+    M(c,b,'call',-58+i,'11:20',o,'Outbound · First meet appointment fixed',{dir:'out',dur:'04:12',status:'Answered'});
+    if(i%2===0) M(c,b,'email',-30+i%9,'15:40',o,'Customer portal access details shared',{dir:'out',subject:'Your DRA customer portal login',body:'Dear '+c.name+',\n\nPlease find your customer portal access below. You can view your payment schedule, documents and raise requests.\n\nRegards,\nCustomer Delight Team'});
+    M(c,b,'call',-(i%6)-1,'12:10',null,'Inbound · '+['asked about registration date','asked for JI schedule','enquired about EB name transfer','wanted parking allotment','asked about interiors partner','called to refer a friend'][i%6],{dir:'in',dur:i%5===0?'00:00':'02:'+String(10+i).padStart(2,'0'),status:i%5===0?'Missed':'Answered',by:i%5===0?null:(i%3===0?other:o)});
+    if(i%3===0) M(c,b,'wa',-(i%4),'18:30',other,'Coordination while owner on another site visit',{dir:'out',thread:[{me:false,t:'Is my JI confirmed for this week?'},{me:true,t:'Yes, confirmed. '+PEOPLE.find(p=>p.id===o).name+' is at another site today, I am covering. Engineer will be present.'}]});
+    if(i%4===1) M(c,b,'email',-(i%5)-2,'11:00',o,'JI coordination: snag list shared',{dir:'out',subject:'Joint Inspection — snag list & next steps',body:'Dear '+c.name+',\n\nAttached is the snag list recorded during the joint inspection. The site team will complete the rectification and we will confirm closure.\n\nRegards,\nCustomer Delight Team'});
+    if(i%4===2) M(c,b,'email',-(i%3)-1,'09:12',null,'Inbound · "Need copy of sale deed draft"',{dir:'in',subject:'Sale deed draft copy',body:'Hi, please share the sale deed draft before registration. Thanks.'});
+  });
+  M(customers[9],customers[9].bookings[0],'call',0,'10:40','rekha','Outbound · Covering for Varadharaj — handover keys timing confirmed',{dir:'out',dur:'03:05',status:'Answered'});
+
+  /* ---- Requests / escalations ---- */
+  let rid=201; const reqs=[];
+  const R=(cidx,cat,src,team,assignee,status,off,level,title,ext,hist)=>{const c=customers[cidx];reqs.push({id:'DLR-'+(rid++),cust:c.id,booking:c.bookings[0].id,cat,source:src,team,assignee,status,raised:D(off),due:D(off+({'Snag / Quality':5,'Documentation':3}[cat]||4)),level,title,extRef:ext,history:hist.map(h=>({at:D(h[0],h[1]),by:h[2],text:h[3]}))});};
+  R(2,'Snag / Quality','In person','Technical / Site','varadh','Waiting on internal team',-6,1,'Living room wall dampness + bath tap leak after JI','ERP ticket CP-4471',[[-6,'15:30','varadh','Raised from JI sheet'],[-4,'11:00','varadh','Site engineer acknowledged, ETA 5 days']]);
+  R(3,'Handover','WhatsApp','Delight Team','rekha','In progress',-2,1,'NRI customer wants handover via Power of Attorney holder','',[[-2,'09:00','rekha','Asked customer for POA copy']]);
+  R(6,'Name transfer / EB-Patta','Inbound call','Liaison (EB / Patta)','madhu','Escalated',-21,2,'EB name transfer pending 3 weeks after handover','Workhall task WH-88213',[[-21,'10:00','madhu','Liaison file submitted'],[-10,'12:00','madhu','Customer called again, upset'],[-3,'16:00','head','Escalated to Delight Head — liaison follow-up']]);
+  R(7,'Snag / Quality','Email','Technical / Site','rekha','Open',-1,1,'Balcony railing paint peeling (pre-JI)','',[[-1,'11:15','rekha','Logged from customer email']]);
+  R(4,'Registration','Inbound call','Legal','mani','In progress',-3,1,'Customer wants registration in joint name — legal check','',[[-3,'14:00','mani','Sent to legal for opinion']]);
+  R(10,'Payment query (→ RM)','WhatsApp','RM / CRM','varadh','Waiting on internal team',-2,1,'Interest charged on delayed payment — wants waiver','PMB ticket DRA-1192',[[-2,'10:00','varadh','Routed to RM (Sowmiya D) — PMB ticket raised']]);
+  R(13,'Customization (→ Customization desk)','In person','Customization','mani','Open',-4,1,'Convert study to pooja room before JI','',[[-4,'17:00','mani','Forwarded to Kalaivani J (Customization)']]);
+  R(15,'Documentation','Email','Delight Team','vignesh','Resolved',-9,1,'Needs possession letter copy for bank','',[[-9,'10:00','vignesh','Requested from CRM'],[-7,'15:00','vignesh','Shared on email — customer confirmed']]);
+  R(8,'Snag / Quality','Customer portal','Technical / Site','mani','Escalated',-15,3,'Seepage in master bedroom after handover — repeat complaint','ERP ticket CP-4390',[[-15,'09:00','mani','Raised in ERP portal'],[-8,'09:00','mani','Second visit — not fixed'],[-5,'11:00','head','Escalated to CRM Head / CSMO']]);
+  R(18,'Name transfer / EB-Patta','Inbound call','Liaison (EB / Patta)','mani','In progress',-6,1,'Patta transfer status','',[[-6,'12:00','mani','Liaison update awaited']]);
+  R(11,'Portal access','Email','Delight Team','rekha','Closed',-12,1,'Unable to log in to customer portal','',[[-12,'10:00','rekha','Password reset by IT'],[-11,'10:00','rekha','Closed — customer logged in']]);
+  R(19,'Other','WhatsApp','Delight Team','vignesh','Open',0,1,'Wants to know community event date','',[[0,'09:30','vignesh','Will share invite']]);
+
+  /* ---- Referrals ---- */
+  let fid=301; const refs=[];
+  const F=(cidx,pn,proj,off,src,member,status,sv,conv,pay)=>{const c=customers[cidx];refs.push({id:'REF-'+(fid++),referrer:c.id,refBooking:c.bookings[0].id,prospect:pn,prospectPhone:'+91 90000 '+String(70000+fid*13),interest:proj,date:D(off),source:src,member,sales:status==='New'?'':['Prakash (Sales)','Divya (Sales)','Rohit (Sales)'][fid%3],status,siteVisit:sv,booking:conv,payout:pay,history:[{at:D(off,'11:00'),by:member,text:'Referral captured'}]});};
+  F(11,'Vijay Anand','DRA ASTRA',-48,'Inbound call','rekha','Booked',{status:'Done',date:D(-40)},{bof:'BOF_D2101',date:D(-30),value:7850000},{status:'CSMO approved',amount:50000,ref:''});
+  F(17,'Shalini Mohan','DRA POLARIS',-35,'Community event','madhu','Booked',{status:'Done',date:D(-28)},{bof:'BOF_D2102',date:D(-14),value:9200000},{status:'Requested',amount:50000,ref:''});
+  F(22,'Karthikeyan R','DRA COVE',-60,'WhatsApp','mani','Booked',{status:'Done',date:D(-55)},{bof:'BOF_D2103',date:D(-45),value:6400000},{status:'Paid',amount:50000,ref:'NEFT UTR DEMO99812',paidOn:D(-5)});
+  F(6,'Ramesh Iyer','DRA ASTRA',-20,'Inbound call','madhu','Site visit done',{status:'Done',date:D(-12)},null,{status:'Not due',amount:0});
+  F(0,'Nirmala Devi','DRA SKYLANTIS',-10,'In person','rekha','Site visit scheduled',{status:'Scheduled',date:D(2)},null,{status:'Not due',amount:0});
+  F(9,'Ganesh Babu','DRA INARA PHASE 2',-8,'Referral call','varadh','Contacted',{status:'Not yet'},null,{status:'Not due',amount:0});
+  F(11,'Preethi Shankar','DRA MARINA 100',-4,'WhatsApp','rekha','Shared with Sales',{status:'Not yet'},null,{status:'Not due',amount:0});
+  F(18,'Arun Prakash','DRA TRINITY',-2,'Inbound call','mani','New',{status:'Not yet'},null,{status:'Not due',amount:0});
+  F(3,'Sanjay Menon','DRA MARINA 100',-30,'Email','rekha','Dropped',{status:'Done',date:D(-25)},null,{status:'Not due',amount:0});
+  F(15,'Meera Krishnan','DRA POLARIS',-15,'Customer portal','vignesh','Site visit done',{status:'Done',date:D(-6)},null,{status:'Not due',amount:0});
+  F(12,'Dinesh Kumar','DRA iHEART',-1,'Inbound call','madhu','New',{status:'Not yet'},null,{status:'Not due',amount:0});
+  F(17,'Lavanya S','DRA COVE',-70,'Community event','madhu','Booked',{status:'Done',date:D(-62)},{bof:'BOF_D2099',date:D(-50),value:6900000},{status:'Head approved',amount:50000,ref:''});
+
+  /* ---- Approvals ---- */
+  const apr=[];
+  const P=(id,type,by,off,cust,details,chain,link)=>apr.push({id,type,by,raised:D(off,'10:00'),cust,details,chain,link});
+  P('APR-0103','Temporary cover','varadh',-3,'C010',{member:'rekha',from:D(-1),to:D(4),reason:'Leave — family function'},[{role:'head',status:'Approved',by:'head',at:D(-2,'09:30'),c:'OK, Rekha to cover.'}]);
+  P('APR-0110','Temporary cover','mani',-1,null,{member:'vignesh',from:D(2),to:D(5),reason:'Leave — medical',scope:'all Manikandan customers'},[{role:'head',status:'Pending'}]);
+  P('APR-0111','Ownership change','madhu',-2,'C013',{from:'madhu',to:'vignesh',reason:'Customer prefers Hindi-speaking contact; Vigneshwaran handles iHEART cluster'},[{role:'head',status:'Pending'}]);
+  P('APR-0112','Referral payout','madhu',-6,'C018',{ref:'REF-302',amount:50000},[{role:'backend',status:'Pending'},{role:'head',status:'Waiting'},{role:'crm',status:'Waiting'}],'REF-302');
+  P('APR-0105','Referral payout','rekha',-20,'C012',{ref:'REF-301',amount:50000},[{role:'backend',status:'Approved',by:'backend',at:D(-18,'12:00'),c:'Booking BOF_D2101 agreement registered; 10% collected.'},{role:'head',status:'Approved',by:'head',at:D(-15,'10:00')},{role:'crm',status:'Approved',by:'crm',at:D(-3,'17:00')}],'REF-301');
+  P('APR-0108','Referral payout','madhu',-12,'C018',{ref:'REF-312',amount:50000},[{role:'backend',status:'Approved',by:'backend',at:D(-10,'12:00'),c:'Eligibility verified'},{role:'head',status:'Approved',by:'head',at:D(-8,'10:00')},{role:'crm',status:'Pending'}],'REF-312');
+  P('APR-0109','Customer exception','mani',-5,'C009',{reason:'Repeat seepage complaint after handover — request CSMO-level intervention with Projects team and goodwill gesture (deep cleaning).'},[{role:'head',status:'Approved',by:'head',at:D(-5,'11:00'),c:'Forwarding to CSMO.'},{role:'crm',status:'Pending'}],'DLR-209');
+
+  return {anchor:iso(TODAY),version:3,customers,acts,comms,reqs,refs,apr,feedback:[],decisions:{},audit:[]};
+}
+
+/* Requirement map. pmb: AV = already available in PMB (seen read-only 2026-11-10), EN = requires enhancement, NEW = new development, PC = pending confirmation.
+   be: what the PMB team must build behind the UI (empty = UI/config only). */
+const REQS = [
+ // Roles & access
+ {id:'DLT-01',page:'Access',f:'Delight Team role, scope "Every customer"',p:'Members can see any customer, so cover and continuity work without re-assignment of visibility.',pmb:'AV',ev:'Admin → Users: role "Delight Team — every customer, the post-booking journey, handover" (5 active users).',be:''},
+ {id:'DLT-02',page:'Access',f:'New role: Delight Head',p:'Team monitoring, assignment/reassignment, first-level approvals.',pmb:'NEW',ev:'No such role in Admin → Users.',be:'Role + server-side scope + approval rights.'},
+ {id:'DLT-03',page:'Access',f:'New role: Delight Backend',p:'Back-office desk: scheduling confirmations, greetings queue, document checklists, referral verification, payout processing, data gaps.',pmb:'NEW',ev:'No such role. Exact duties to be confirmed by Delight Head.',be:'Role + queue screens.'},
+ {id:'DLT-04',page:'Access',f:'CRM Head / CSMO: monitoring + second-level approvals',p:'Final approval for referral payouts and customer exceptions.',pmb:'EN',ev:'"CRM Head / CXO" exists but is read-only ("no messaging or edits").',be:'Allow approve/reject actions only, keep everything else read-only.'},
+ {id:'DLT-05',page:'Access',f:'Three UI layers: Working · Monitoring · Approvals',p:'Each role lands on the layer it needs (member → working; head → monitoring + approvals; CSMO → monitoring + approvals).',pmb:'NEW',ev:'',be:'Role-based landing page + menu.'},
+ // Dashboard
+ {id:'DLT-10',page:'Dashboard',f:'Delight dashboard with clickable KPI cards',p:'Assigned customers, today\'s activities, First Meets, Registrations, JIs, Handovers, follow-ups, open requests, referrals, engagement — each opens filtered records.',pmb:'NEW',ev:'PMB Home has the same card pattern for collections/admin.',be:'Aggregation queries on Delight activity data.'},
+ {id:'DLT-11',page:'Dashboard',f:'Today\'s queue in the side panel (like Next actions)',p:'Member sees overdue + today items without screen-hopping.',pmb:'EN',ev:'Next actions exists (calls, collections, emails, WhatsApp, Workhall tasks).',be:'Add Delight activity + follow-up items to Next actions.'},
+ // Customer 360
+ {id:'DLT-20',page:'Customer 360',f:'Customer details, bookings, unit, RM, Workhall stage, timeline',p:'Single view of the customer.',pmb:'AV',ev:'Customer page shows booking, unit, RM, Workhall stage tracker, tasks, payment position and History timeline.',be:''},
+ {id:'DLT-21',page:'Customer 360',f:'Delight ownership panel (primary owner, temporary cover, RM read-only)',p:'Shows who owns the relationship without touching RM ownership.',pmb:'NEW',ev:'Only RM is shown today.',be:'Delight owner + cover fields per customer, history of changes.'},
+ {id:'DLT-22',page:'Customer 360',f:'Delight journey tracker (First Meet → Registration → JI → Handover → Post-handover)',p:'Delight-specific stage view next to Workhall stages; stages are not strictly sequential.',pmb:'EN',ev:'Workhall stage tracker exists (Booking Form … Handed Over). Stages incl. "Customer Delight Team Meeting", "Pre Delivery Inspection", "EB / Patta Transfer".',be:'Map Workhall stages + Delight activities to the journey.'},
+ {id:'DLT-23',page:'Customer 360',f:'Engagement profile (birthday, anniversary, language, preferences)',p:'Drives greetings and engagement.',pmb:'PC',ev:'DOB / anniversary not seen in PMB. Source to be confirmed (ERP booking form? Workhall?).',be:'Source field mapping; editable by Delight if not in ERP.'},
+ {id:'DLT-24',page:'Customer 360',f:'Multiple bookings and multiple contact numbers',p:'One customer, several units / co-applicants / NRI numbers.',pmb:'AV',ev:'Customers list shows "2 bookings", "Co-applicant"; "Add number / email" exists.',be:''},
+ {id:'DLT-25',page:'Customer 360',f:'Referral history and pending requests on the customer page',p:'Context before calling.',pmb:'NEW',ev:'',be:'Join referrals + requests by customer.'},
+ // Communication
+ {id:'DLT-30',page:'Communication',f:'Calls (MCube), WhatsApp (Gallabox), email in one timeline',p:'Communication history.',pmb:'AV',ev:'Inboxes → All calls / All WhatsApp / All emails; customer History timeline.',be:''},
+ {id:'DLT-31',page:'Communication',f:'Filter by Delight member, booking, channel, date',p:'Head reviews team communication; member picks up a colleague\'s thread.',pmb:'EN',ev:'Inbox filters are RM-centric.',be:'Add Delight member + booking filters.'},
+ {id:'DLT-32',page:'Communication',f:'Delight members\' extensions and Gallabox numbers mapped',p:'Delight calls/WhatsApp land on the customer timeline.',pmb:'PC',ev:'Delight users have extensions (448, 455, 458, 462, 502). Transition to standard official WhatsApp numbers discussed (MoM §2).',be:'Gallabox channel per Delight number.'},
+ {id:'DLT-33',page:'Communication',f:'Registration WhatsApp groups captured',p:'Groups with customer + internal teams.',pmb:'PC',ev:'MoM §2: feasibility to be evaluated (Gallabox group support).',be:'Depends on Gallabox API for groups.'},
+ {id:'DLT-34',page:'Communication',f:'Delight shared mailbox (customerdelight@) synced',p:'Delight emails on the timeline.',pmb:'EN',ev:'customerdelight@ mailbox is synced but was 10 days behind on 24 Oct (finding CP-016).',be:'Fix sync reliability.'},
+ {id:'DLT-35',page:'Communication',f:'WhatsApp templates for Delight (welcome, first meet, registration, JI, handover, greetings)',p:'Standard official communication.',pmb:'PC',ev:'Template list to be shared by Delight team (MoM §7.4).',be:'Gallabox template approval + send from PMB.'},
+ // Activities
+ {id:'DLT-40',page:'Activities',f:'Unified activity tracker (First Meet, Registration, JI, Handover, Post-handover, Follow-up, Engagement)',p:'Replaces Excel trackers for Delight touchpoints.',pmb:'NEW',ev:'Workhall shows some tasks (e.g. "First Meet · Execute First meet") on the customer page.',be:'Activity entity + APIs; read Workhall tasks where they exist (no duplicate).'},
+ {id:'DLT-41',page:'Activities',f:'Create, assign, reassign, status update with remarks and next follow-up',p:'Daily working.',pmb:'NEW',ev:'',be:'Activity CRUD + audit log.'},
+ {id:'DLT-42',page:'Activities',f:'Registration document checklist',p:'Hospitality + docs readiness.',pmb:'NEW',ev:'Checklist items to be confirmed (MoM §7.2).',be:'Configurable checklist per activity type.'},
+ {id:'DLT-43',page:'Activities',f:'JI observations / snag capture with team and closure status',p:'Replaces paper JI sheet.',pmb:'PC',ev:'Today: physical JI sheet; Skylantis uses a separate app. Decide PMB vs ERP/Workhall as system of record.',be:'Snag entity or link to ERP snag ticket.'},
+ {id:'DLT-44',page:'Activities',f:'Bulk reassignment for leave / availability',p:'Head moves a member\'s activities for a date range.',pmb:'NEW',ev:'',be:'Bulk update + notifications.'},
+ // Requests
+ {id:'DLT-50',page:'Requests',f:'Register customer query with source, category, team, person, status',p:'Consolidated visibility of customer concerns.',pmb:'EN',ev:'PMB Tickets exist (types: Collection follow-up, Callback, Document request, Escalation, Other…; statuses incl. Pending approval, Breached).',be:'Add Delight categories + source field to Tickets, or a Delight view over Tickets.'},
+ {id:'DLT-51',page:'Requests',f:'External reference to ERP / customer-portal / Workhall ticket',p:'PMB does not replace existing ticketing.',pmb:'PC',ev:'MoM §4: existing ERP/portal ticketing to be evaluated.',be:'Reference field now; read integration later.'},
+ {id:'DLT-52',page:'Requests',f:'Escalation levels L1 member → L2 Delight Head → L3 CRM Head / CSMO',p:'Clear escalation path.',pmb:'EN',ev:'Tickets have "Escalation" type; no level.',be:'Level + SLA breach rules.'},
+ // Referrals
+ {id:'DLT-60',page:'Referrals',f:'Capture referral: referrer customer + booking, prospect, source, Delight member',p:'Requested by Operations Head.',pmb:'NEW',ev:'',be:'Referral entity.'},
+ {id:'DLT-61',page:'Referrals',f:'Status, site visit, booking conversion',p:'Track to conversion.',pmb:'PC',ev:'Sales CRM / lead system for prospects to be confirmed (duplicate-lead check).',be:'Hand-off to sales system + status sync.'},
+ {id:'DLT-62',page:'Referrals',f:'Payout eligibility and payment status with approvals',p:'Control referral payouts.',pmb:'PC',ev:'Eligibility rule and amount to be confirmed (e.g. agreement registered / % collected).',be:'Approval chain + Accounts confirmation.'},
+ {id:'DLT-63',page:'Referrals',f:'Referral performance dashboard',p:'Funnel, by member, by project, by referrer.',pmb:'NEW',ev:'',be:'Aggregations.'},
+ // Approvals
+ {id:'DLT-70',page:'Approvals',f:'Approval inbox for Delight types (temporary cover, ownership change, referral payout, customer exception)',p:'Approvals layer for Head and CSMO.',pmb:'EN',ev:'Money → Approvals exists for deferments and waivers.',be:'New approval types + multi-step chain.'},
+ // Ownership
+ {id:'DLT-80',page:'Team monitor',f:'Primary Delight ownership separate from RM ownership',p:'Relationship continuity across stages.',pmb:'NEW',ev:'RM ownership logic must not change.',be:'Separate field; RM logic untouched.'},
+ {id:'DLT-81',page:'Team monitor',f:'Temporary cover with dates (auto-expires)',p:'Leave / simultaneous activities.',pmb:'NEW',ev:'',be:'Cover record with from/to; routing of queue items during cover.'},
+ {id:'DLT-82',page:'Team monitor',f:'Head view: member workload, overdue, SLA, comms today',p:'Team Head visibility.',pmb:'NEW',ev:'Team & QC → Team exists for RMs.',be:'Aggregations.'},
+ // Reports
+ {id:'DLT-90',page:'Reports',f:'Daily activities, pending follow-ups, engagement, communication, referrals, member-wise',p:'Tracking.',pmb:'NEW',ev:'',be:'Report queries.'},
+ {id:'DLT-91',page:'Reports',f:'Export (CSV / Excel)',p:'Share with management.',pmb:'EN',ev:'',be:'Server-side export with role scope.'},
+ // Engagement & backend desk
+ {id:'DLT-95',page:'Backend desk',f:'Greetings queue (birthdays / anniversaries) with template send',p:'Daily engagement without manual lists.',pmb:'NEW',ev:'Today done manually each day.',be:'Gallabox template send + log.'},
+ {id:'DLT-96',page:'Backend desk',f:'Data gaps list (missing DOB, email, alternate number)',p:'Data quality for engagement.',pmb:'NEW',ev:'',be:'Rules.'},
+ {id:'DLT-97',page:'Dashboard',f:'Community events and annual events with RSVP tracking',p:'Post-handover engagement (60–70% occupancy trigger).',pmb:'PC',ev:'Discussed; RSVP capture method to be confirmed.',be:'Event entity + invite list.'}
+];
+const PMB_LABEL={AV:'Already available',EN:'Requires enhancement',NEW:'New development',PC:'Pending confirmation'};
+const PMB_TAG={AV:'',EN:'blue',NEW:'purple',PC:'amber'};
+
+/* ===== State, persistence, roles, helpers ===== */
+const LS_KEY='pmb_delight_proto', LS_SES='pmb_delight_proto_session', LS_DEV='pmb_delight_proto_dev';
+let S=null, SES={user:'rekha'};
+function lsGet(k){try{return localStorage.getItem(k);}catch(e){return null;}}
+function lsSet(k,v){try{localStorage.setItem(k,v);}catch(e){}}
+function shiftAll(obj,days){ // move every YYYY-MM-DD date so demo "today" stays meaningful on later days
+  const re=/^(\d{4}-\d{2}-\d{2})(T\d{2}:\d{2})?$/;
+  const walk=o=>{ if(Array.isArray(o)) return o.forEach((v,i)=>{ if(typeof v==='string'&&re.test(v)) o[i]=sh(v); else if(v&&typeof v==='object') walk(v);});
+    for(const k in o){const v=o[k]; if(k==='anchor'||k==='feedback'||k==='decisions'||k==='audit') continue;
+      if((k==='dob'||k==='anniversary')&&typeof v==='string'&&/^\d\d-\d\d$/.test(v)){o[k]=sh(TODAY.getFullYear()+'-'+v).slice(5);continue;}
+      if(typeof v==='string'&&re.test(v)) o[k]=sh(v); else if(v&&typeof v==='object') walk(v);} };
+  const sh=s=>{const d=new Date(s.slice(0,10)+'T00:00:00');d.setDate(d.getDate()+days);return iso(d)+s.slice(10);};
+  walk(obj);
+}
+function load(){
+  const raw=lsGet(LS_KEY); let st=null;
+  try{st=raw?JSON.parse(raw):null;}catch(e){st=null;}
+  if(!st||st.version!==3){ st=seedData(); }
+  else if(st.anchor!==iso(TODAY)){
+    const diff=Math.round((TODAY-new Date(st.anchor+'T00:00:00'))/864e5);
+    if(diff) shiftAll(st,diff);
+    st.anchor=iso(TODAY);
+  }
+  S=st; save();
+  try{SES=JSON.parse(lsGet(LS_SES))||SES;}catch(e){}
+  if(lsGet(LS_DEV)==='1') document.body.classList.add('dev');
+}
+function save(){lsSet(LS_KEY,JSON.stringify(S));}
+function resetDemo(){ const fb=S.feedback, dec=S.decisions; S=seedData(); S.feedback=fb; S.decisions=dec; save(); toast('Demo data reset (feedback kept).'); render(); }
+
+const me=()=>PEOPLE.find(p=>p.id===SES.user);
+const role=()=>me().role;
+function can(a){
+  const r=role();
+  const M={
+    edit:['member','backend','head','admin'],
+    assignAny:['backend','head','admin'],
+    changeOwner:['head','admin'],
+    bulk:['head','backend','admin'],
+    verify:['backend','admin'],
+    markPaid:['backend','admin'],
+    team:['head','crm','admin'],
+    settings:['admin'],
+    seeAll:['backend','head','crm','admin']
+  };
+  return (M[a]||[]).includes(r);
+}
+function layerOf(page){return ({dashboard:['member','backend'].includes(role())?'work':'mon',customers:'work',customer:'work',comms:'work',activities:'work',requests:'work',referrals:'work',team:'mon',reports:'mon',approvals:'apr',settings:'mon',requirements:'proto',feedback:'proto',handover:'proto'})[page]||'work';}
+const LAYER_LABEL={work:'Working',mon:'Monitoring',apr:'Approvals',proto:'Prototype review'};
+
+/* helpers */
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const pname=id=>id?((PEOPLE.find(p=>p.id===id)||{name:id}).name):'—';
+const initials=n=>n.split(/\s+/).filter(Boolean).slice(0,2).map(w=>w[0]).join('').toUpperCase();
+const cust=id=>S.customers.find(c=>c.id===id);
+function booking(id){for(const c of S.customers){const b=c.bookings.find(b=>b.id===id); if(b) return b;}return null;}
+const atype=k=>ACT_TYPES.find(t=>t.k===k)||{l:k,ico:'•'};
+const MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+function fd(s){if(!s) return '—'; const d=new Date(s.slice(0,10)+'T00:00:00'); const t=iso(TODAY); const diff=Math.round((d-TODAY)/864e5);
+  const base=d.getDate()+' '+MON[d.getMonth()]; if(diff===0) return 'Today'; if(diff===1) return 'Tomorrow'; if(diff===-1) return 'Yesterday'; return base;}
+function fdt(s){if(!s) return '—'; return fd(s)+(s.length>10?', '+s.slice(11,16):'');}
+const dayDiff=s=>Math.round((new Date(s.slice(0,10)+'T00:00:00')-TODAY)/864e5);
+const unitLabel=b=>b?`${b.project}${b.tower&&b.tower!=='—'?' · '+b.tower:''} · ${b.unit}`:'—';
+const money=n=>'Rs '+Number(n||0).toLocaleString('en-IN');
+const nextActId=()=>'ACT-'+(Math.max(0,...S.acts.map(a=>+a.id.split('-')[1]||0))+1);
+const uid=p=>p+'-'+Math.random().toString(36).slice(2,7).toUpperCase();
+const nowStr=()=>{const d=new Date();return iso(d)+'T'+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');};
+const be=t=>`<span class="be" title="Requires PMB backend work">⚙ ${esc(t)}</span>`;
+const ui=t=>`<span class="ui">▣ ${esc(t||'UI demo')}</span>`;
+function audit(text){S.audit.unshift({at:nowStr(),by:SES.user,text});S.audit=S.audit.slice(0,300);}
+function tagStatus(s){const m={Completed:'',Confirmed:'blue',Planned:'grey','No response':'red',Rescheduled:'amber',Cancelled:'grey',Open:'amber','In progress':'blue','Waiting on internal team':'amber',Escalated:'red',Resolved:'',Closed:'grey',New:'amber','Shared with Sales':'blue',Contacted:'blue','Site visit scheduled':'blue','Site visit done':'purple',Booked:'solid',Dropped:'grey','Not due':'grey',Requested:'amber',Verified:'blue','Head approved':'blue','CSMO approved':'purple',Paid:'',Rejected:'red',Pending:'amber',Approved:'',Waiting:'grey'};return `<span class="tag ${m[s]||'grey'}">${esc(s)}</span>`;}
+
+/* scope: what "mine" means for a Delight member */
+function custInScope(c,scope){ if(scope==='all') return true; const u=SES.user; return c.owner===u||(c.cover&&c.cover.member===u&&coverActive(c.cover))||S.acts.some(a=>a.cust===c.id&&a.assignee===u&&a.status!=='Completed'); }
+function coverActive(cv){return cv&&dayDiff(cv.from)<=0&&dayDiff(cv.to)>=0;}
+function actInScope(a,scope){ if(scope==='all') return true; const c=cust(a.cust); return a.assignee===SES.user||(c.owner===SES.user&&a.assignee===SES.user); }
+function defScope(){return ['member'].includes(role())?'mine':'all';}
+function effOwner(c){return c.cover&&coverActive(c.cover)?c.cover.member:c.owner;}
+
+/* routing */
+let ROUTE={page:'dashboard',id:null,q:{}};
+function parseHash(){const h=location.hash.replace(/^#\/?/,''); const [path,qs]=h.split('?'); const [page,id]=(path||'dashboard').split('/'); const q={}; (qs||'').split('&').filter(Boolean).forEach(p=>{const [k,v]=p.split('=');q[decodeURIComponent(k)]=decodeURIComponent(v||'');}); ROUTE={page:page||'dashboard',id:id||null,q};}
+function go(page,q,id){const qs=q?Object.entries(q).filter(([k,v])=>v!==''&&v!=null).map(([k,v])=>encodeURIComponent(k)+'='+encodeURIComponent(v)).join('&'):''; location.hash='#/'+page+(id?'/'+id:'')+(qs?'?'+qs:'');}
+function setQ(k,v){const q=Object.assign({},ROUTE.q);q[k]=v;go(ROUTE.page,q,ROUTE.id);}
+
+/* toasts / modals / drawer */
+function toast(m){const t=document.createElement('div');t.className='toast';t.innerHTML=m;document.body.appendChild(t);setTimeout(()=>t.remove(),2600);}
+function closeOv(){document.querySelectorAll('.ov,.drawer').forEach(e=>e.remove());}
+function modal(html,cls){closeOv();const o=document.createElement('div');o.className='ov';o.innerHTML=`<div class="modal ${cls||''}"><button class="x" data-x>✕</button>${html}</div>`;o.addEventListener('click',e=>{if(e.target===o||e.target.closest('[data-x]'))o.remove();});document.body.appendChild(o);return o;}
+function drawer(html){closeOv();const ov=document.createElement('div');ov.className='ov';ov.style.background='rgba(18,30,26,.25)';const d=document.createElement('div');d.className='drawer';d.innerHTML=`<button class="x" data-x>✕</button>`+html;ov.addEventListener('click',e=>{if(e.target===ov)closeOv();});d.addEventListener('click',e=>{if(e.target.closest('[data-x]'))closeOv();});document.body.appendChild(ov);document.body.appendChild(d);return d;}
+const val=(root,name)=>{const el=root.querySelector(`[name="${name}"]`);return el?(el.type==='checkbox'?el.checked:el.value.trim()):'';};
+function opts(list,sel,blank){return (blank!==undefined?`<option value="">${esc(blank)}</option>`:'')+list.map(o=>{const v=typeof o==='object'?o.v:o,l=typeof o==='object'?o.l:o;return `<option value="${esc(v)}" ${String(v)===String(sel)?'selected':''}>${esc(l)}</option>`;}).join('');}
+const memberOpts=(sel,blank)=>opts(MEMBERS.map(m=>({v:m,l:pname(m)})),sel,blank);
+const custOpts=sel=>opts(S.customers.map(c=>({v:c.id,l:`${c.name} — ${unitLabel(c.bookings[0])}`})),sel,'Select customer…');
+
+/* CSV / download */
+function csv(rows){return rows.map(r=>r.map(v=>{v=String(v==null?'':v);return /[",\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v;}).join(',')).join('\r\n');}
+function download(name,text,type){const b=new Blob([text],{type:type||'text/csv'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},500);}
+function tableCSV(tbl,name){const rows=[...tbl.querySelectorAll('tr')].map(tr=>[...tr.children].filter(td=>!td.classList.contains('noexp')).map(td=>td.innerText.replace(/\s+/g,' ').trim()));download(name,'﻿'+csv(rows));toast('Exported '+esc(name));}
+
+/* ===== Shell ===== */
+const NAV=[
+ {layer:'Working',items:[['dashboard','Dashboard'],['customers','Customer 360'],['activities','Activities'],['comms','Communication'],['requests','Requests & escalations'],['referrals','Referrals']]},
+ {layer:'Monitoring',items:[['team','Team monitor'],['reports','Reports']]},
+ {layer:'Approvals',items:[['approvals','Approvals']]},
+ {layer:'Prototype review',items:[['requirements','Requirement map'],['feedback','Stakeholder feedback'],['handover','Dev handover'],['settings','Delight settings']]}
+];
+function navAllowed(p){const r=role(); if(p==='team') return can('team'); if(p==='settings') return r==='admin'; return true;}
+function pendingForMe(){return S.apr.filter(a=>canActOn(a)).length;}
+function myQueue(){
+  const scope=defScope();
+  const acts=S.acts.filter(a=>a.status!=='Completed'&&a.status!=='Cancelled'&&dayDiff(a.date)<=0&&(scope==='all'?true:a.assignee===SES.user)).sort((a,b)=>a.date.localeCompare(b.date));
+  return acts;
+}
+function renderShell(){
+  const p=me();
+  document.getElementById('who').innerHTML=`<div class="avatar ${p.role==='member'?'':'g'}">${initials(p.name)}</div><div><b>${esc(p.name)}</b><span>${esc(ROLE_LABEL[p.role])}</span></div>`;
+  document.getElementById('ext').innerHTML=p.ext&&p.ext!=='—'?`<span class="dot"></span> ext ${p.ext}`:'<span class="dot" style="background:#999"></span> No extension';
+  const sel=document.getElementById('asUser'); sel.innerHTML=PEOPLE.map(x=>`<option value="${x.id}" ${x.id===SES.user?'selected':''}>${esc(x.name)} — ${esc(ROLE_LABEL[x.role])}</option>`).join('');
+  document.getElementById('devToggle').checked=document.body.classList.contains('dev');
+  document.getElementById('fbCount').textContent=S.feedback.length;
+  // side nav
+  const pa=pendingForMe(), q=myQueue();
+  const openReq=S.reqs.filter(r=>!['Resolved','Closed'].includes(r.status)&&(defScope()==='all'||r.assignee===SES.user)).length;
+  let h=`<div class="pillset">${['Work','Money','Team & QC','Inboxes'].map(g=>`<button class="pill dis" data-existing="${g}">${g}</button>`).join('')}<button class="pill on">Delight<span class="new">NEW</span></button><button class="pill dis" data-existing="Admin">Admin</button></div>`;
+  h+=`<div class="subnav">`;
+  NAV.forEach(g=>{const its=g.items.filter(i=>navAllowed(i[0])); if(!its.length) return; h+=`<div class="lbl">${g.layer}</div>`+its.map(([k,l])=>{let n='';if(k==='approvals'&&pa) n=`<span class="n a">${pa}</span>`; if(k==='activities'&&q.length) n=`<span class="n">${q.length}</span>`; if(k==='requests'&&openReq) n=`<span class="n a">${openReq}</span>`; if(k==='feedback'&&S.feedback.length) n=`<span class="n a">${S.feedback.length}</span>`; const on=ROUTE.page===k||(k==='customers'&&ROUTE.page==='customer'); return `<a class="chip ${on?'on':''}" href="#/${k}">${l}${n}</a>`;}).join('');});
+  h+=`</div><h3>${role()==='member'?'My queue':'Team queue'} <a href="#/activities?range=due">Open →</a></h3><div class="muted small" style="margin:-4px 0 8px">${q.length} due or overdue · oldest first</div>`;
+  h+=q.slice(0,8).map(a=>{const c=cust(a.cust),b=booking(a.booking),od=dayDiff(a.date)<0;return `<div class="qitem" data-cust="${c.id}"><div class="row between"><span class="row"><span class="tag ${od?'red':'blue'}">${od?'Overdue':'Today'}</span><span class="tag grey">${esc(atype(a.type).l)}</span></span><span class="tiny muted">${fd(a.date)}</span></div><b>${esc(c.name)}</b><div class="meta">${esc(unitLabel(b))} · ${esc(pname(a.assignee))}</div></div>`;}).join('')||'<div class="muted small">Nothing due. 🎉</div>';
+  const side=document.getElementById('side'); side.innerHTML=h;
+  side.querySelectorAll('[data-existing]').forEach(b=>b.onclick=()=>toast(`“${esc(b.dataset.existing)}” is an existing PMB section — unchanged and not part of this prototype.`));
+  side.querySelectorAll('[data-cust]').forEach(b=>b.onclick=()=>go('customer',null,b.dataset.cust));
+}
+function pageHeader(title,sub,actions){
+  const L=layerOf(ROUTE.page);
+  return `<div class="ph"><div><span class="eyebrow ${L}">Delight · ${LAYER_LABEL[L]}</span><h1>${title}</h1>${sub?`<p>${sub}</p>`:''}</div><div class="row">${actions||''}<button class="btn sm" data-fb-page>💬 Comment on this page</button></div></div>`;
+}
+const PAGES={};
+function render(){
+  parseHash(); if(!navAllowed(ROUTE.page)){ROUTE.page='dashboard';}
+  renderShell();
+  const main=document.getElementById('main');
+  const fn=PAGES[ROUTE.page]||PAGES.dashboard;
+  main.innerHTML=''; fn(main);
+  main.querySelectorAll('[data-fb-page]').forEach(b=>b.onclick=()=>openFeedback());
+  main.querySelectorAll('[data-go]').forEach(el=>el.addEventListener('click',()=>{const [p,qs]=el.dataset.go.split('?');const q={};(qs||'').split('&').filter(Boolean).forEach(x=>{const [k,v]=x.split('=');q[k]=v;});go(p,q);}));
+  main.querySelectorAll('[data-cust]').forEach(el=>el.addEventListener('click',e=>{if(e.target.closest('button,input,select,a'))return;go('customer',null,el.dataset.cust);}));
+  window.scrollTo(0,0);
+}
+
+/* ===== Approvals engine ===== */
+function canActOn(a){ const step=a.chain.find(s=>s.status==='Pending'); if(!step) return false; return role()==='admin'||step.role===role(); }
+function aprSummary(a){const d=a.details;const c=a.cust?cust(a.cust):null;
+  if(a.type==='Temporary cover') return `${pname(a.by)} asks ${pname(d.member)} to cover ${d.scope?esc(d.scope):(c?esc(c.name):'')} from ${fd(d.from)} to ${fd(d.to)} — ${esc(d.reason)}`;
+  if(a.type==='Ownership change') return `Move primary Delight owner of ${esc(c.name)} from ${pname(d.from)} to ${pname(d.to)} — ${esc(d.reason)}`;
+  if(a.type==='Referral payout'){const r=S.refs.find(x=>x.id===d.ref);return `Referral payout ${money(d.amount)} to ${esc(cust(r.referrer).name)} for referring ${esc(r.prospect)} (${r.booking?esc(r.booking.bof):'—'})`;}
+  if(a.type==='Customer exception') return `${esc(c?c.name:'')}: ${esc(d.reason)}`;
+  return '';}
+function decide(a,ok,comment){
+  const step=a.chain.find(s=>s.status==='Pending'); if(!step) return;
+  step.status=ok?'Approved':'Rejected'; step.by=SES.user; step.at=nowStr(); step.c=comment||'';
+  const nxt=a.chain.find(s=>s.status==='Waiting');
+  if(ok&&nxt) nxt.status='Pending';
+  if(!ok) a.chain.filter(s=>s.status==='Waiting').forEach(s=>s.status='Skipped');
+  const done=!a.chain.some(s=>s.status==='Pending'||s.status==='Waiting');
+  if(a.type==='Referral payout'){const r=S.refs.find(x=>x.id===a.details.ref); if(!ok) r.payout.status='Rejected'; else r.payout.status={backend:'Verified',head:'Head approved',crm:'CSMO approved'}[step.role]||r.payout.status; r.history.push({at:nowStr(),by:SES.user,text:`Payout ${ok?'approved':'rejected'} at ${ROLE_LABEL[step.role]} step${comment?': '+comment:''}`});}
+  if(done&&ok){
+    if(a.type==='Temporary cover'){const d=a.details; const list=a.cust?[cust(a.cust)]:S.customers.filter(c=>c.owner===a.by); list.forEach(c=>c.cover={member:d.member,from:d.from,to:d.to,reason:d.reason,approval:a.id});
+      S.acts.filter(x=>list.some(c=>c.id===x.cust)&&x.assignee===a.by&&x.status!=='Completed'&&dayDiff(x.date)>=dayDiff(d.from)&&dayDiff(x.date)<=dayDiff(d.to)).forEach(x=>{x.assignee=d.member;x.log.push({at:nowStr(),by:SES.user,text:`Reassigned to ${pname(d.member)} (temporary cover ${a.id})`});});}
+    if(a.type==='Ownership change'){const c=cust(a.cust); c.owner=a.details.to; c.notes.unshift({at:nowStr(),by:SES.user,text:`Primary Delight owner changed ${pname(a.details.from)} → ${pname(a.details.to)} (${a.id})`});}
+    if(a.type==='Customer exception'&&a.link){const r=S.reqs.find(x=>x.id===a.link); if(r) r.history.push({at:nowStr(),by:SES.user,text:`Exception approved by CRM Head / CSMO (${a.id})`});}
+  }
+  audit(`${ok?'Approved':'Rejected'} ${a.id} (${a.type})`);
+  save();
+}
+function raiseApproval(type,cid,details,link){
+  const chains={'Temporary cover':['head'],'Ownership change':['head'],'Referral payout':['backend','head','crm'],'Customer exception':['head','crm']};
+  const id='APR-'+String(200+S.apr.length).padStart(4,'0');
+  const a={id,type,by:SES.user,raised:nowStr(),cust:cid,details,link,chain:chains[type].map((r,i)=>({role:r,status:i===0?'Pending':'Waiting'}))};
+  // self-approval when the raiser is the approver of first step
+  S.apr.unshift(a); if(a.chain[0].role===role()||(role()==='admin'&&chains[type].length===1)) decide(a,true,'Raised and approved by approver');
+  audit(`Raised ${id} (${type})`); save(); return a;
+}
+
+/* ===== Feedback ===== */
+const PAGE_NAMES={dashboard:'Dashboard',customers:'Customer 360',customer:'Customer 360',activities:'Activities',comms:'Communication',requests:'Requests',referrals:'Referrals',team:'Team monitor',reports:'Reports',approvals:'Approvals',requirements:'Requirement map',feedback:'Stakeholder feedback',handover:'Dev handover',settings:'Delight settings'};
+function openFeedback(pre){
+  pre=pre||{}; const pg=pre.page||PAGE_NAMES[ROUTE.page]||'General';
+  const reqs=REQS.filter(r=>r.page===pg||pg==='General'||pg==='Requirement map');
+  const who=lsGet('pmb_delight_fb_name')||'', wr=lsGet('pmb_delight_fb_role')||'';
+  const o=modal(`<h2>Feedback / change request</h2><p class="muted small">Saved in this browser. Export from “Stakeholder feedback” to consolidate.</p>
+  <div class="form" style="margin-top:12px">
+    <label>Your name<input class="inp" name="who" value="${esc(who)}" placeholder="e.g. Delight Head"></label>
+    <label>Your role<select class="inp" name="wrole">${opts(['Delight Head','Operations Head','Delight Member','Delight Backend','CRM Head / CSMO','PMB development team','AI & Automation','Other'],wr)}</select></label>
+    <label>Page<select class="inp" name="page">${opts(Object.values(PAGE_NAMES).filter((v,i,a)=>a.indexOf(v)===i).concat(['General','Access']),pg)}</select></label>
+    <label>Requirement<select class="inp" name="req">${opts(REQS.map(r=>({v:r.id,l:r.id+' · '+r.f.slice(0,60)})),pre.req||'',reqs.length?'— General / not listed —':'— General —')}</select></label>
+    <label>Type<select class="inp" name="type">${opts(['Missing functionality','Modification','Comment','Question'],pre.type||'Comment')}</select></label>
+    <label>Status<select class="inp" name="status">${opts(['Pending Confirmation','Accepted','Needs Changes'],pre.status||'Pending Confirmation')}</select></label>
+    <label class="full">Comment<textarea class="inp" name="comment" placeholder="What is missing, what should change, or what you confirm…"></textarea></label>
+  </div><div class="acts"><button class="btn" data-x>Cancel</button><button class="btn pri" id="fbSave">Save feedback</button></div>`);
+  o.querySelector('#fbSave').onclick=()=>{
+    const f={id:'FB-'+String(S.feedback.length+1).padStart(3,'0')+'-'+Math.random().toString(36).slice(2,5),at:nowStr(),who:val(o,'who')||'Anonymous',wrole:val(o,'wrole'),page:val(o,'page'),req:val(o,'req'),type:val(o,'type'),status:val(o,'status'),comment:val(o,'comment'),asRole:ROLE_LABEL[role()]};
+    if(!f.comment){toast('Please add a comment.');return;}
+    lsSet('pmb_delight_fb_name',f.who); lsSet('pmb_delight_fb_role',f.wrole);
+    S.feedback.push(f); if(f.req) S.decisions[f.req]=f.status; save(); o.remove(); toast('Feedback saved — '+esc(f.id)); render();
+  };
+}
+
+/* ===== Boot ===== */
+function boot(){
+  load();
+  document.getElementById('asUser').onchange=e=>{SES.user=e.target.value;lsSet(LS_SES,JSON.stringify(SES));toast('Now viewing as '+esc(me().name)+' · '+esc(ROLE_LABEL[role()]));render();};
+  document.getElementById('devToggle').onchange=e=>{document.body.classList.toggle('dev',e.target.checked);lsSet(LS_DEV,e.target.checked?'1':'0');};
+  document.getElementById('resetBtn').onclick=()=>{if(confirm('Reset all demo records to the original sample data? Stakeholder feedback is kept.')) resetDemo();};
+  document.getElementById('fbTop').onclick=()=>openFeedback();
+  document.getElementById('fbFab').onclick=()=>openFeedback();
+  document.getElementById('newBtn').onclick=()=>openNewActivity();
+  document.getElementById('logout').onclick=()=>toast('Prototype — sign-in is handled by PMB.');
+  document.getElementById('bell').onclick=()=>go('approvals');
+  const gs=document.getElementById('gsearch');
+  gs.addEventListener('keydown',e=>{if(e.key==='Enter'){const t=gs.value.trim().toLowerCase(); if(!t) return; const c=S.customers.find(c=>c.name.toLowerCase().includes(t)||c.phones.some(p=>p.num.replace(/\s/g,'').includes(t.replace(/\s/g,'')))||c.bookings.some(b=>(b.id+' '+b.unit+' '+b.project).toLowerCase().includes(t))); if(c){go('customer',null,c.id);gs.value='';} else toast('No demo customer matches “'+esc(t)+'”');}});
+  window.addEventListener('hashchange',render);
+  render();
+  if(lsGet('pmb_delight_notice')!=='1'){const o=modal(`<span class="eyebrow proto">Internal prototype</span><h2>PMB Delight Team module</h2><p>This is an <b>internal DRA Homes prototype</b> for stakeholder review. It is not the PMB platform.</p><ul class="small"><li>All <b>customers, units, booking numbers and phone numbers are fictional</b> demo data.</li><li>It is not connected to PMB, MCube, Gallabox, Workhall or ERP. Calls, WhatsApp and emails are simulated, and nothing is sent.</li><li>Your changes and feedback are saved <b>only in this browser</b>. Export them from “Stakeholder feedback”.</li></ul><div class="acts"><button class="btn pri" id="ack">I understand, open the prototype</button></div>`);o.querySelector('#ack').onclick=()=>{lsSet('pmb_delight_notice','1');o.remove();};}
+}
+
+/* ===== Dashboard ===== */
+function within(a,from,to){const d=dayDiff(a.date);return d>=from&&d<=to;}
+const isEng=a=>ENGAGE.includes(a.type);
+const openAct=a=>!['Completed','Cancelled'].includes(a.status);
+function kpi(v,l,s,go,cls){return `<div class="kpi ${cls||''}" data-go="${go}"><div class="v">${v}</div><div class="l">${l}</div><div class="s">${s}</div></div>`;}
+
+PAGES.dashboard=function(el){
+  const r=role(), scope=defScope(), mine=scope==='mine';
+  const acts=S.acts.filter(a=>actInScope(a,scope));
+  const custs=S.customers.filter(c=>custInScope(c,scope));
+  const today=acts.filter(a=>within(a,0,0));
+  const next7=t=>acts.filter(a=>a.type===t&&openAct(a)&&within(a,0,7)).length;
+  const overdue=acts.filter(a=>openAct(a)&&dayDiff(a.date)<0);
+  const fups=acts.filter(a=>openAct(a)&&(a.type==='followup'||(a.next&&dayDiff(a.next)<=0))&&dayDiff(a.date)<=0);
+  const reqs=S.reqs.filter(q=>!['Resolved','Closed'].includes(q.status)&&(!mine||q.assignee===SES.user));
+  const esc2=reqs.filter(q=>q.status==='Escalated').length;
+  const refs=S.refs.filter(f=>(!mine||f.member===SES.user)&&dayDiff(f.date)>=-30);
+  const eng=acts.filter(a=>isEng(a)&&within(a,0,0));
+  const greet=today.filter(a=>a.type==='birthday'||a.type==='anniversary');
+  const hour=new Date().getHours(); const hi=hour<12?'Good morning':hour<17?'Good afternoon':'Good evening';
+  const dn=TODAY.toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long'});
+  let h='';
+  if(r==='backend'){ return backendDesk(el); }
+  const title= mine?`${hi}, ${esc(me().name)}`:(r==='crm'?'Delight — management view':'Delight team console');
+  h+=pageHeader(title,dn);
+  h+=`<div class="lede">${mine?'You have':'The team has'} <b>${today.filter(a=>openAct(a)).length}</b> activities today, <b>${overdue.length}</b> overdue, <b>${greet.length}</b> birthday / anniversary wishes and <b>${reqs.length}</b> open customer requests${esc2?` (${esc2} escalated)`:''}.</div>`;
+  if(mine) h+=`<div class="note info">Scope: <b>my customers</b> (primary owner, temporary cover or an activity assigned to me). The Delight role in PMB can still open <a href="#/customers?scope=all">every customer</a> — history stays visible to the whole team. ${be('Delight owner/cover fields')}</div>`;
+  h+=`<div class="grid g5">`+
+    kpi(custs.length,'Assigned customers',mine?'owner or covering':'with a Delight owner',`customers?scope=${scope}`)+
+    kpi(today.length,'Today\'s activities',`${today.filter(a=>a.status==='Completed').length} done`,`activities?range=today&scope=${scope}`)+
+    kpi(next7('firstmeet'),'First Meets','next 7 days',`activities?type=firstmeet&range=next7&scope=${scope}`)+
+    kpi(next7('registration'),'Registrations','next 7 days',`activities?type=registration&range=next7&scope=${scope}`)+
+    kpi(next7('ji'),'Joint Inspections','next 7 days',`activities?type=ji&range=next7&scope=${scope}`)+
+    kpi(next7('handover'),'Handovers','next 7 days',`activities?type=handover&range=next7&scope=${scope}`)+
+    kpi(overdue.length+fups.length,'Pending follow-ups',`${overdue.length} overdue activities`,`activities?range=due&scope=${scope}`,overdue.length?'red':'')+
+    kpi(reqs.length,'Open requests',`${esc2} escalated`,`requests?scope=${scope}`,reqs.length?'amber':'grey')+
+    kpi(`${refs.length}`,'Referrals · 30 days',`${refs.filter(f=>f.status==='Booked').length} booked · ${refs.filter(f=>f.siteVisit&&f.siteVisit.status==='Done').length} site visits`,'referrals')+
+    kpi(eng.length,'Engagement today','birthdays · anniversaries · events',`activities?type=engagement&range=today&scope=${scope}`)+
+  `</div>`;
+  if(['head','crm','admin'].includes(r)){
+    const pend=S.apr.filter(a=>a.chain.some(s=>s.status==='Pending'));
+    h+=`<div class="sec-t">The team · the lead's console</div><div class="grid g4">`+
+      kpi(pend.length,'Approvals pending',`${pendingForMe()} waiting for you`,'approvals',pendingForMe()?'amber':'grey')+
+      kpi(S.reqs.filter(q=>q.level>=2&&!['Resolved','Closed'].includes(q.status)).length,'Escalations L2 / L3','Delight Head · CSMO','requests?level=2',S.reqs.some(q=>q.level>=2&&q.status==='Escalated')?'red':'')+
+      kpi(S.customers.filter(c=>c.cover&&coverActive(c.cover)).length,'Customers under cover','temporary reassignment','team')+
+      kpi(acts.filter(a=>openAct(a)&&dayDiff(a.date)<-atype(a.type).sla).length,'SLA breaches','activities past SLA','activities?range=breach&scope=all',acts.some(a=>openAct(a)&&dayDiff(a.date)<-atype(a.type).sla)?'red':'')+
+    `</div>`;
+    h+=`<div class="sec-t">Member-wise today</div>`+memberTable();
+  }
+  h+=`<div class="grid g2" style="margin-top:18px"><div class="card"><h3>Today's schedule</h3>${actMiniList(today.filter(a=>!isEng(a)),true)}</div><div class="card"><h3>Engagement today</h3>${actMiniList(eng,true)||''}<div class="muted small" style="margin-top:8px">Greetings use Gallabox templates <span class="mono">birthday_wish</span> / <span class="mono">anniversary_wish</span>. ${be('Gallabox template send')}</div></div></div>`;
+  h+=`<div class="card" style="margin-top:14px"><h3>Next 7 days</h3>${actMiniList(acts.filter(a=>openAct(a)&&within(a,1,7)).sort((a,b)=>a.date.localeCompare(b.date)),false)}</div>`;
+  el.innerHTML=h; wireMini(el);
+};
+function actMiniList(list,quick){
+  if(!list.length) return '<div class="empty">Nothing here.</div>';
+  return `<div class="tl">`+list.map(a=>{const c=cust(a.cust),b=booking(a.booking),t=atype(a.type),own=c.owner!==a.assignee;
+    return `<div class="tl-i" data-cust="${c.id}" style="cursor:pointer"><div class="ic co">${t.ico}</div><div><div class="h"><b>${esc(c.name)}</b><span>${esc(t.l)}</span><span>· ${fd(a.date)} ${esc(a.time||'')}</span>${tagStatus(a.status)}${own?(c.cover&&coverActive(c.cover)&&c.cover.member===a.assignee?`<span class="tag amber" title="Temporary cover">${esc(pname(a.assignee))} covering for ${esc(pname(c.owner))}</span>`:`<span class="tag purple" title="Activity-specific assignment">assigned to ${esc(pname(a.assignee))} · owner ${esc(pname(c.owner))}</span>`):''}</div><div class="b small muted">${esc(unitLabel(b))} · ${esc(a.mode)} · ${esc(a.remarks)}</div>${quick&&openAct(a)&&can('edit')?`<div class="row" style="margin-top:6px">${(a.type==='birthday'||a.type==='anniversary')?`<button class="btn sm" data-wish="${a.id}">Send wish (template)</button>`:''}<button class="btn sm" data-upd="${a.id}">Update status</button></div>`:''}</div></div>`;}).join('')+`</div>`;
+}
+function wireMini(el){
+  el.querySelectorAll('[data-upd]').forEach(b=>b.onclick=e=>{e.stopPropagation();openUpdate(S.acts.find(a=>a.id===b.dataset.upd));});
+  el.querySelectorAll('[data-wish]').forEach(b=>b.onclick=e=>{e.stopPropagation();const a=S.acts.find(x=>x.id===b.dataset.wish);const c=cust(a.cust);
+    S.comms.push({id:uid('MSG'),cust:c.id,booking:a.booking,ch:'wa',at:nowStr(),by:SES.user,dir:'out',summary:`Template: ${a.type==='birthday'?'birthday_wish':'anniversary_wish'}`,thread:[{me:true,t:a.type==='birthday'?`Dear ${c.name.split(' ')[0]}, warm birthday wishes from all of us at DRA Homes!`:`Dear ${c.name.split(' ')[0]}, happy anniversary from the DRA family!`}]});
+    a.status='Completed';a.log.push({at:nowStr(),by:SES.user,text:'Wish sent via WhatsApp template (demo)'});save();toast('Demo: WhatsApp template queued for '+esc(c.name)+' — logged on timeline.');render();});
+}
+function memberTable(){
+  const rows=MEMBERS.map(m=>{const a=S.acts.filter(x=>x.assignee===m);
+    return {m,owned:S.customers.filter(c=>c.owner===m).length,cover:S.customers.filter(c=>c.cover&&coverActive(c.cover)&&c.cover.member===m).length,away:S.customers.filter(c=>c.owner===m&&c.cover&&coverActive(c.cover)).length,
+      today:a.filter(x=>within(x,0,0)).length,done:a.filter(x=>within(x,0,0)&&x.status==='Completed').length,overdue:a.filter(x=>openAct(x)&&dayDiff(x.date)<0).length,
+      comms:S.comms.filter(c=>c.by===m&&dayDiff(c.at)>=-7).length,reqs:S.reqs.filter(q=>q.assignee===m&&!['Resolved','Closed'].includes(q.status)).length,refs:S.refs.filter(f=>f.member===m&&dayDiff(f.date)>=-30).length};});
+  return `<div class="tbl-wrap"><table><tr><th>Member</th><th>Owns</th><th>Covering</th><th>Today</th><th>Overdue</th><th>Comms · 7d</th><th>Open requests</th><th>Referrals · 30d</th></tr>`+rows.map(r=>`<tr class="click" data-go="activities?member=${r.m}&scope=all"><td><b>${esc(pname(r.m))}</b>${r.away?` <span class="tag amber">on leave · ${r.away} covered</span>`:''}</td><td>${r.owned}</td><td>${r.cover||'—'}</td><td>${r.done}/${r.today}</td><td>${r.overdue?`<span class="tag red">${r.overdue}</span>`:'0'}</td><td>${r.comms}</td><td>${r.reqs}</td><td>${r.refs}</td></tr>`).join('')+`</table></div>`;
+}
+function backendDesk(el){
+  const toConfirm=S.acts.filter(a=>a.status==='Planned'&&!isEng(a)&&within(a,0,3));
+  const greet=S.acts.filter(a=>(a.type==='birthday'||a.type==='anniversary')&&openAct(a)&&within(a,0,0));
+  const regCk=S.acts.filter(a=>a.type==='registration'&&openAct(a)&&a.checklist&&Object.values(a.checklist).some(v=>!v));
+  const verify=S.apr.filter(a=>a.type==='Referral payout'&&a.chain[0].status==='Pending');
+  const toPay=S.refs.filter(f=>f.payout.status==='CSMO approved');
+  const gaps=S.customers.filter(c=>!c.anniversary||c.phones.length<2);
+  let h=pageHeader('Delight backend desk',TODAY.toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long'})+' · queues that keep the members free for customers');
+  h+=`<div class="note">“Delight Backend” is a <b>new role</b>. The duties below are a proposal — Delight Head to confirm. ${be('new role + queues')}</div>`;
+  h+=`<div class="grid g3">`+kpi(toConfirm.length,'Appointments to confirm','planned in next 3 days','activities?status=Planned&range=next3&scope=all',toConfirm.length?'amber':'')+kpi(greet.length,'Greetings to send','birthdays & anniversaries today','activities?type=engagement&range=today&scope=all')+kpi(regCk.length,'Registration checklists','documents still pending','activities?type=registration&scope=all',regCk.length?'amber':'')+kpi(verify.length,'Referral payouts to verify','eligibility check','approvals',verify.length?'amber':'grey')+kpi(toPay.length,'Payouts to mark paid','CSMO approved → Accounts','referrals?tab=register&pay=CSMO approved',toPay.length?'red':'grey')+kpi(gaps.length,'Data gaps','no anniversary / single number','customers?gap=1&scope=all','grey')+`</div>`;
+  h+=`<div class="grid g2" style="margin-top:18px"><div class="card"><h3>Greetings queue — today</h3>${actMiniList(greet,true)}<div class="row" style="margin-top:10px"><button class="btn pri sm" id="bulkWish" ${greet.length?'':'disabled'}>Send all ${greet.length} via template</button>${be('Gallabox bulk template')}</div></div>
+  <div class="card"><h3>Appointments to confirm</h3>${actMiniList(toConfirm,true)}</div></div>`;
+  h+=`<div class="card" style="margin-top:14px"><h3>Registration document checklists</h3><div class="tbl-wrap"><table><tr><th>Date</th><th>Customer · unit</th><th>Member</th><th>Pending documents</th></tr>${regCk.map(a=>{const c=cust(a.cust);return `<tr class="click" data-upd2="${a.id}"><td>${fd(a.date)}</td><td><b>${esc(c.name)}</b><div class="sub">${esc(unitLabel(booking(a.booking)))}</div></td><td>${esc(pname(a.assignee))}</td><td>${Object.entries(a.checklist).filter(([k,v])=>!v).map(([k])=>`<span class="tag amber">${esc(k)}</span>`).join(' ')}</td></tr>`;}).join('')}</table></div></div>`;
+  el.innerHTML=h; wireMini(el);
+  el.querySelectorAll('[data-upd2]').forEach(r=>r.onclick=()=>openUpdate(S.acts.find(a=>a.id===r.dataset.upd2)));
+  const bw=el.querySelector('#bulkWish'); if(bw) bw.onclick=()=>{greet.forEach(a=>{const c=cust(a.cust);S.comms.push({id:uid('MSG'),cust:c.id,booking:a.booking,ch:'wa',at:nowStr(),by:SES.user,dir:'out',summary:'Template: '+(a.type==='birthday'?'birthday_wish':'anniversary_wish')+' (bulk)',thread:[{me:true,t:'Warm wishes from the DRA family!'}]});a.status='Completed';a.log.push({at:nowStr(),by:SES.user,text:'Bulk wish sent (demo)'});});save();toast(greet.length+' wishes queued (demo) and logged on each timeline.');render();};
+}
+
+/* ===== Customer list + 360 ===== */
+PAGES.customers=function(el){ customerPage(el,null); };
+PAGES.customer=function(el){ customerPage(el,ROUTE.id); };
+function customerPage(el,id){
+  const q=ROUTE.q, scope=q.scope||defScope();
+  let list=S.customers.filter(c=>custInScope(c,scope));
+  if(q.project) list=list.filter(c=>c.bookings.some(b=>b.project===q.project));
+  if(q.stage) list=list.filter(c=>c.bookings.some(b=>(b.stageIdx===5?'engagement':JOURNEY[b.stageIdx].k)===q.stage));
+  if(q.owner) list=list.filter(c=>c.owner===q.owner);
+  if(q.gap) list=list.filter(c=>!c.anniversary||c.phones.length<2);
+  if(q.t){const t=q.t.toLowerCase();list=list.filter(c=>(c.name+' '+c.phones.map(p=>p.num).join(' ')+' '+c.bookings.map(b=>b.id+' '+b.unit+' '+b.project).join(' ')).toLowerCase().includes(t));}
+  const sel=id?cust(id):null;
+  let h=pageHeader('Customer 360°',`${list.length} customers · ${scope==='mine'?'my customers':'all Delight customers'} · RM ownership is read-only here`);
+  h+=`<div class="split"><div><div class="filters"><input class="inp grow" id="cq" placeholder="Search name, phone, unit, BOF…" value="${esc(q.t||'')}"><div class="seg">${['mine','all'].map(s=>`<button data-scope="${s}" class="${scope===s?'on':''}">${s==='mine'?'Mine':'All'}</button>`).join('')}</div></div>
+  <div class="filters"><select class="inp" id="cproj">${opts(PROJECTS,q.project||'','All projects')}</select><select class="inp" id="cstage">${opts(JOURNEY.map(j=>({v:j.k,l:j.l})).concat([{v:'engagement',l:'Engagement (handed over)'}]),q.stage||'','All journey stages')}</select><select class="inp" id="cown">${memberOpts(q.owner||'','Any owner')}</select></div>
+  ${q.gap?'<div class="note">Showing data gaps: missing anniversary or only one contact number. <a href="#/customers?scope=all">Clear</a></div>':''}
+  <div class="clist">${list.map(c=>{const b=c.bookings[0];const cv=c.cover&&coverActive(c.cover);return `<div class="citem ${sel&&sel.id===c.id?'on':''}" data-open="${c.id}"><div class="avatar g">${initials(c.name)}</div><div style="min-width:0;flex:1"><div class="row"><b>${esc(c.name)}</b>${c.bookings.length>1?`<span class="tag">${c.bookings.length} bookings</span>`:''}${c.nri?'<span class="tag blue">NRI</span>':''}${cv?'<span class="tag amber">cover</span>':''}</div><div class="meta">${esc(unitLabel(b))} · ${esc(b.stageIdx===5?'Engagement':JOURNEY[b.stageIdx].l)} · ${esc(pname(effOwner(c)))}</div></div></div>`;}).join('')||'<div class="empty">No customers match.</div>'}</div></div>
+  <div id="c360">${sel?c360(sel):`<div class="card empty" style="padding:80px 20px"><h2>Open a customer</h2><p>Pick a name on the left to see bookings, Delight ownership, journey, activities, requests, referrals and every conversation.</p></div>`}</div></div>`;
+  el.innerHTML=h;
+  const cq=el.querySelector('#cq'); cq.addEventListener('keydown',e=>{if(e.key==='Enter')setQ('t',cq.value);});
+  el.querySelectorAll('[data-scope]').forEach(b=>b.onclick=()=>setQ('scope',b.dataset.scope));
+  el.querySelector('#cproj').onchange=e=>setQ('project',e.target.value);
+  el.querySelector('#cstage').onchange=e=>setQ('stage',e.target.value);
+  el.querySelector('#cown').onchange=e=>setQ('owner',e.target.value);
+  el.querySelectorAll('[data-open]').forEach(b=>b.onclick=()=>go('customer',ROUTE.q,b.dataset.open));
+  if(sel) wire360(el,sel);
+}
+function c360(c){
+  const tf=ROUTE.q.ch||'all', bk=ROUTE.q.b||c.bookings[0].id, b=c.bookings.find(x=>x.id===bk)||c.bookings[0];
+  const comms=S.comms.filter(m=>m.cust===c.id).sort((a,b)=>b.at.localeCompare(a.at));
+  const cnt=ch=>comms.filter(m=>m.ch===ch).length;
+  const acts=S.acts.filter(a=>a.cust===c.id);
+  const up=acts.filter(openAct).sort((a,b)=>a.date.localeCompare(b.date));
+  const reqs=S.reqs.filter(r=>r.cust===c.id);
+  const refs=S.refs.filter(r=>r.referrer===c.id);
+  const cv=c.cover&&coverActive(c.cover);
+  const stageName=b.stageIdx===5?'Handed over — engagement':JOURNEY[b.stageIdx].l;
+  const nextA=up[0];
+  let h=`<div class="card"><div class="row between" style="align-items:flex-start"><div class="row" style="align-items:flex-start;gap:12px"><div class="avatar g" style="width:46px;height:46px;font-size:15px">${initials(c.name)}</div><div><h2>${esc(c.name)}</h2>
+    <div class="small">${c.phones.map(p=>`<div>${esc(p.num)} <span class="muted">· ${esc(p.label)}</span></div>`).join('')}</div><div class="small muted">${c.emails.map(esc).join(', ')} · ${esc(c.city)}</div>${c.coApplicant?`<div class="small">Co-applicant: ${esc(c.coApplicant)}</div>`:''}<button class="btn sm" style="margin-top:6px" data-addnum>+ Add number / email</button></div></div>
+    <div class="row"><button class="btn sm" data-dial>📞 Call</button><button class="btn sm" data-wa>WhatsApp ${cnt('wa')}</button><button class="btn sm" data-tl="email">Email ${cnt('email')}</button><button class="btn sm warn" data-newreq>Request</button></div></div>
+    <div class="row small muted" style="margin-top:8px"><span>Calls ${cnt('call')}</span>·<span>WhatsApp ${cnt('wa')}</span>·<span>Email ${cnt('email')}</span>·<span>Requests ${reqs.length}</span>·<span>Referrals given ${refs.length}</span></div></div>`;
+  h+=`<div class="cheat" style="margin-top:14px"><div class="k">✦ CHEAT SHEET</div><p>${esc(c.name)} — ${esc(unitLabel(b))} · ${esc(stageName)} · Delight: ${esc(pname(effOwner(c)))}${cv?' (covering for '+esc(pname(c.owner))+')':''} · RM: ${esc(b.rm)}${nextA?` · next: ${esc(atype(nextA.type).l)} ${fd(nextA.date)}`:''}${reqs.some(r=>!['Resolved','Closed'].includes(r.status))?' · has open requests':''}. ${esc(c.prefs)}.</p></div>`;
+  h+=`<div class="grid g2" style="margin-top:14px"><div class="card"><h3>Delight ownership ${be('owner + cover fields')}</h3><div class="own"><dl class="kv"><dt>Primary owner</dt><dd><b>${esc(pname(c.owner))}</b></dd><dt>Temporary cover</dt><dd>${c.cover?`${esc(pname(c.cover.member))} · ${fd(c.cover.from)} → ${fd(c.cover.to)} ${cv?'<span class="tag amber">active</span>':'<span class="tag grey">'+(dayDiff(c.cover.to)<0?'expired':'scheduled')+'</span>'}<div class="sub muted small">${esc(c.cover.reason)}</div>`:'—'}</dd><dt>Relationship Manager</dt><dd>${esc(b.rm)} <span class="tag grey" title="RM ownership logic unchanged">from Workhall · read-only</span></dd><dt>This booking's activities</dt><dd>${[...new Set(acts.filter(a=>a.booking===b.id).map(a=>a.assignee))].map(pname).map(esc).join(', ')||'—'}</dd></dl></div>
+    <div class="row" style="margin-top:10px">${can('changeOwner')?'<button class="btn sm" data-own>Change owner</button><button class="btn sm" data-cover>Set temporary cover</button>':(can('edit')?'<button class="btn sm" data-own>Request owner change</button><button class="btn sm" data-cover>Request temporary cover</button>':'')}</div></div>
+    <div class="card"><h3>Engagement profile ${ui('fields to confirm')}</h3><dl class="kv"><dt>Birthday</dt><dd>${esc(fmtMD(c.dob))}</dd><dt>Anniversary</dt><dd>${c.anniversary?esc(fmtMD(c.anniversary)):'<span class="tag amber">missing</span>'}</dd><dt>Language</dt><dd>${esc(c.language)}</dd><dt>Preference</dt><dd>${esc(c.prefs)}</dd><dt>NRI</dt><dd>${c.nri?'Yes — '+esc(c.city):'No'}</dd></dl><div class="muted small" style="margin-top:6px">Source of DOB / anniversary to be confirmed (ERP booking form?). ${be('field mapping')}</div></div></div>`;
+  // bookings
+  h+=`<div class="card" style="margin-top:14px">${c.bookings.length>1?`<div class="tabs">${c.bookings.map(x=>`<button data-bk="${x.id}" class="${x.id===b.id?'on':''}">${esc(x.project)} · ${esc(x.unit)}</button>`).join('')}</div>`:''}
+    <div class="row between"><h3 style="margin:0">${esc(b.project)}${b.tower!=='—'?' · '+esc(b.tower):''} <span class="muted small" style="font-family:var(--sans)">Unit ${esc(b.unit)} · ${esc(b.cfg)}</span></h3><span class="mono muted">${esc(b.id)}</span></div>
+    <div class="row small muted" style="margin:6px 0"><span class="tag">Workhall · synced 6h ago</span> Booked ${fd(b.bookedOn)} · RM: ${esc(b.rm)} · Workhall stage: <b>${esc(b.whStage)}</b></div>
+    <div class="small" style="margin-top:10px;font-weight:600">Delight journey <span class="muted" style="font-weight:400">— touchpoints are not strictly sequential</span></div>
+    <div class="steps">${JOURNEY.map(j=>`<div class="st ${b.journey[j.k]==='done'?'done':b.journey[j.k]==='current'?'cur':''}"><i></i>${j.l}</div>`).join('')}<div class="st ${b.stageIdx===5?'cur':''}"><i></i>Engagement</div></div></div>`;
+  // upcoming, requests, referrals
+  h+=`<div class="grid g3" style="margin-top:14px"><div class="card"><div class="row between"><h3 style="margin:0">Upcoming activities</h3>${can('edit')?'<button class="btn sm" data-newact>+ New</button>':''}</div>${up.length?up.map(a=>`<div style="padding:8px 0;border-bottom:1px solid #f0efe7"><div class="row between"><b class="small">${atype(a.type).ico} ${esc(atype(a.type).l)}</b>${tagStatus(a.status)}</div><div class="small muted">${fdt(a.date+'T'+(a.time||''))} · ${esc(pname(a.assignee))}${a.assignee!==c.owner?' <span class="tag purple">activity-specific</span>':''}</div>${can('edit')?`<button class="btn sm" style="margin-top:4px" data-upd="${a.id}">Update</button> <button class="btn sm" data-rea="${a.id}">Reassign</button>`:''}</div>`).join(''):'<div class="empty">None scheduled.</div>'}</div>
+    <div class="card"><div class="row between"><h3 style="margin:0">Requests</h3></div>${reqs.length?reqs.map(r=>`<div style="padding:8px 0;border-bottom:1px solid #f0efe7;cursor:pointer" data-req="${r.id}"><div class="row between"><span class="mono small">${r.id}</span>${tagStatus(r.status)}</div><div class="small"><b>${esc(r.title)}</b></div><div class="small muted">${esc(r.cat)} · ${esc(r.team)} · L${r.level}${r.extRef?' · '+esc(r.extRef):''}</div></div>`).join(''):'<div class="empty">No requests.</div>'}</div>
+    <div class="card"><h3>Referral history</h3>${refs.length?refs.map(r=>`<div style="padding:8px 0;border-bottom:1px solid #f0efe7;cursor:pointer" data-ref="${r.id}"><div class="row between"><b class="small">${esc(r.prospect)}</b>${tagStatus(r.status)}</div><div class="small muted">${esc(r.interest)} · ${fd(r.date)} · payout ${esc(r.payout.status)}</div></div>`).join(''):'<div class="empty">No referrals yet.</div>'}${can('edit')?'<button class="btn sm" data-newref>+ Capture referral</button>':''}</div></div>`;
+  // timeline
+  const tl=comms.filter(m=>tf==='all'||m.ch===tf).map(m=>({k:'m',at:m.at,m})).concat(tf==='all'||tf==='note'?c.notes.map(n=>({k:'n',at:n.at,n})):[]).concat(tf==='all'?acts.flatMap(a=>a.log.filter(l=>l.text!=='Created').map(l=>({k:'a',at:l.at,a,l}))):[]).sort((x,y)=>y.at.localeCompare(x.at));
+  h+=`<div class="card" style="margin-top:14px"><div class="row between"><h3 style="margin:0">History <span class="muted small" style="font-family:var(--sans)">calls · WhatsApp · email · notes · activity updates, one timeline — visible to every Delight member</span></h3></div>
+    <div class="row" style="margin:10px 0">${[['all','All'],['call','Calls'],['wa','WhatsApp'],['email','Email'],['note','Notes']].map(([k,l])=>`<button class="chip ${tf===k?'on':''}" data-tl="${k}">${l}</button>`).join('')}</div>
+    ${can('edit')?`<div class="row" style="margin-bottom:8px"><input class="inp grow" id="noteTxt" placeholder="Internal note — only the team sees this"><button class="btn sm pri" id="noteSave">Save note</button></div>`:''}
+    <div class="tl">${tl.map(x=>tlItem(x)).join('')||'<div class="empty">No communications recorded yet.</div>'}</div></div>`;
+  return h;
+}
+function fmtMD(md){if(!md) return '—';const [m,d]=md.split('-');return Number(d)+' '+MON[Number(m)-1];}
+function chIcon(m){if(m.ch==='wa') return ['wa','💬','WhatsApp'];if(m.ch==='email') return ['em','✉','Email'];if(m.dir==='in') return [m.status==='Missed'?'mc':'ci','☎',m.status==='Missed'?'Missed call':'Inbound call'];return ['co','☎','Outbound call'];}
+function tlItem(x){
+  if(x.k==='n') return `<div class="tl-i"><div class="ic nt">✎</div><div><div class="h"><b>Note</b><span>${esc(pname(x.n.by))}</span><span>· ${fdt(x.n.at)}</span></div><div class="b">${esc(x.n.text)}</div></div></div>`;
+  if(x.k==='a') return `<div class="tl-i"><div class="ic">${atype(x.a.type).ico}</div><div><div class="h"><b>${esc(atype(x.a.type).l)}</b><span>${esc(pname(x.l.by))}</span><span>· ${fdt(x.l.at)}</span></div><div class="b small">${esc(x.l.text)}</div></div></div>`;
+  const m=x.m,[cls,ic,lab]=chIcon(m);
+  return `<div class="tl-i" data-msg="${m.id}" style="cursor:pointer"><div class="ic ${cls}">${ic}</div><div><div class="h"><b>${lab}</b><span>${m.by?'by '+esc(pname(m.by)):'unanswered / not yet handled'}</span><span>· ${fdt(m.at)}</span>${m.dur?`<span class="mono">${m.dur}</span>`:''}${m.booking?`<span class="mono tiny">${m.booking}</span>`:''}</div><div class="b small">${esc(m.subject||m.summary)}</div></div></div>`;
+}
+function wire360(el,c){
+  el.querySelectorAll('[data-tl]').forEach(b=>b.onclick=()=>setQ('ch',b.dataset.tl));
+  el.querySelectorAll('[data-bk]').forEach(b=>b.onclick=()=>setQ('b',b.dataset.bk));
+  el.querySelectorAll('[data-msg]').forEach(b=>b.onclick=()=>openMsg(S.comms.find(m=>m.id===b.dataset.msg)));
+  el.querySelectorAll('[data-upd]').forEach(b=>b.onclick=()=>openUpdate(S.acts.find(a=>a.id===b.dataset.upd)));
+  el.querySelectorAll('[data-rea]').forEach(b=>b.onclick=()=>openReassign([S.acts.find(a=>a.id===b.dataset.rea)]));
+  el.querySelectorAll('[data-req]').forEach(b=>b.onclick=()=>openReq(S.reqs.find(r=>r.id===b.dataset.req)));
+  el.querySelectorAll('[data-ref]').forEach(b=>b.onclick=()=>openRef(S.refs.find(r=>r.id===b.dataset.ref)));
+  const q=s=>el.querySelector(s);
+  if(q('[data-newact]')) q('[data-newact]').onclick=()=>openNewActivity({cust:c.id});
+  if(q('[data-newref]')) q('[data-newref]').onclick=()=>openNewRef({referrer:c.id});
+  if(q('[data-newreq]')) q('[data-newreq]').onclick=()=>openNewReq({cust:c.id});
+  if(q('[data-own]')) q('[data-own]').onclick=()=>openOwner(c);
+  if(q('[data-cover]')) q('[data-cover]').onclick=()=>openCover(c.owner,c);
+  q('[data-dial]').onclick=()=>toast(`Demo: PMB would dial ${esc(c.phones[0].num)} through MCube from ext ${esc(me().ext)}. Call lands on this timeline.`);
+  q('[data-wa]').onclick=()=>openWA(c);
+  q('[data-addnum]').onclick=()=>{const o=modal(`<h2>Add number / email</h2><div class="form" style="margin-top:10px"><label>Label<input class="inp" name="l" placeholder="e.g. Son · USA"></label><label>Number or email<input class="inp" name="n"></label></div><div class="acts"><button class="btn" data-x>Cancel</button><button class="btn pri" id="ok">Add</button></div>`);o.querySelector('#ok').onclick=()=>{const n=val(o,'n');if(!n) return; if(n.includes('@')) c.emails.push(n); else c.phones.push({label:val(o,'l')||'Other',num:n}); save();o.remove();render();};};
+  const ns=q('#noteSave'); if(ns) ns.onclick=()=>{const t=q('#noteTxt').value.trim(); if(!t) return; c.notes.unshift({at:nowStr(),by:SES.user,text:t}); save(); toast('Note saved'); render();};
+}
+function openMsg(m){
+  const c=cust(m.cust),[cls,ic,lab]=chIcon(m);
+  let body='';
+  if(m.ch==='wa') body=(m.thread||[]).map(t=>`<div class="bubble ${t.me?'me':''}">${esc(t.t)}</div>`).join('')+`<div class="muted small">Gallabox conversation · official number ${be('Gallabox')}</div>`;
+  else if(m.ch==='email') body=`<div class="card"><div class="small muted">Subject</div><b>${esc(m.subject||'')}</b><pre style="white-space:pre-wrap;font:inherit;margin-top:10px">${esc(m.body||m.summary)}</pre></div><div class="muted small" style="margin-top:6px">From customerdelight@ shared mailbox ${be('M365 sync')}</div>`;
+  else body=`<dl class="kv"><dt>Direction</dt><dd>${m.dir==='in'?'Inbound':'Outbound'}</dd><dt>Status</dt><dd>${esc(m.status||'Answered')}</dd><dt>Duration</dt><dd class="mono">${esc(m.dur||'—')}</dd><dt>Handled by</dt><dd>${esc(pname(m.by))}</dd></dl><div class="card" style="margin-top:10px">▶ Recording · MCube ${be('MCube recording link')}</div>`;
+  drawer(`<span class="eyebrow work">${lab}</span><h2>${esc(c.name)}</h2><p class="muted">${fdt(m.at)} · ${esc(unitLabel(booking(m.booking)))}</p>${body}<div class="note info" style="margin-top:14px">Continuity: any Delight member opening this customer sees this conversation, even if ${esc(pname(m.by))} handled it.</div>`);
+}
+function openWA(c){
+  const o=modal(`<h2>WhatsApp ${esc(c.name)}</h2><p class="muted small">Outside the 24-hour window only approved templates can be sent (PMB already enforces this for RMs).</p><div class="form" style="margin-top:10px"><label class="full">Template<select class="inp" name="t">${opts(WA_TEMPLATES)}</select></label><label class="full">Number<select class="inp" name="n">${opts(c.phones.map(p=>({v:p.num,l:p.num+' · '+p.label})))}</select></label></div><div class="acts"><button class="btn" data-x>Cancel</button><button class="btn pri" id="ok">Send (demo)</button></div>`);
+  o.querySelector('#ok').onclick=()=>{S.comms.push({id:uid('MSG'),cust:c.id,booking:c.bookings[0].id,ch:'wa',at:nowStr(),by:SES.user,dir:'out',summary:'Template: '+val(o,'t'),thread:[{me:true,t:'['+val(o,'t')+'] sent to '+val(o,'n')}]});save();o.remove();toast('Demo only — nothing was sent. Logged on the timeline.');render();};
+}
+
+/* ===== Activities ===== */
+PAGES.activities=function(el){
+  const q=ROUTE.q, scope=q.scope||defScope(), range=q.range||'next7';
+  let list=S.acts.filter(a=>actInScope(a,scope));
+  if(q.type) list=list.filter(a=>q.type==='engagement'?isEng(a):a.type===q.type);
+  if(q.status) list=list.filter(a=>a.status===q.status);
+  if(q.member) list=list.filter(a=>a.assignee===q.member);
+  if(q.project) list=list.filter(a=>booking(a.booking).project===q.project);
+  if(q.t){const t=q.t.toLowerCase();list=list.filter(a=>(cust(a.cust).name+' '+unitLabel(booking(a.booking))+' '+a.remarks).toLowerCase().includes(t));}
+  const base=list;
+  const R={today:a=>within(a,0,0),next3:a=>within(a,0,3),next7:a=>within(a,0,7),due:a=>openAct(a)&&dayDiff(a.date)<=0,overdue:a=>openAct(a)&&dayDiff(a.date)<0,breach:a=>openAct(a)&&dayDiff(a.date)<-atype(a.type).sla,past:a=>dayDiff(a.date)<0,all:()=>true};
+  if(q.day) list=list.filter(a=>a.date===q.day); else list=list.filter(R[range]||R.all);
+  list.sort((a,b)=>(a.date+(a.time||'')).localeCompare(b.date+(b.time||'')));
+  const bulk=can('bulk');
+  let h=pageHeader('Activity management','First Meets, Registrations, Joint Inspections, Handovers, Post-handover, Follow-ups and Engagement in one tracker',can('edit')?'<button class="btn pri" id="newAct">+ New activity</button>':'');
+  h+=`<div class="week">${[0,1,2,3,4,5,6].map(i=>{const d=iso(MD(i)),n=base.filter(a=>a.date===d).length,dt=MD(i);return `<div class="day ${q.day===d?'on':''} ${i===0?'today':''}" data-day="${d}"><div class="dn">${dt.toLocaleDateString('en-IN',{weekday:'short'})} ${dt.getDate()} ${MON[dt.getMonth()]}</div><b>${n}</b> <span class="tiny muted">activities</span></div>`;}).join('')}</div>`;
+  h+=`<div class="filters"><div class="seg">${['mine','all'].map(s=>`<button data-scope="${s}" class="${scope===s?'on':''}">${s==='mine'?'Mine':'Team'}</button>`).join('')}</div>
+    <select class="inp" id="frange">${opts([{v:'today',l:'Today'},{v:'due',l:'Due & overdue'},{v:'overdue',l:'Overdue only'},{v:'breach',l:'Past SLA'},{v:'next3',l:'Next 3 days'},{v:'next7',l:'Next 7 days'},{v:'past',l:'Past'},{v:'all',l:'All dates'}],q.day?'':range)}</select>
+    <select class="inp" id="ftype">${opts(ACT_TYPES.map(t=>({v:t.k,l:t.l})).concat([{v:'engagement',l:'All engagement'}]),q.type||'','All activity types')}</select>
+    <select class="inp" id="fstatus">${opts(ACT_STATUS,q.status||'','All statuses')}</select>
+    <select class="inp" id="fmember">${memberOpts(q.member||'','All members')}</select>
+    <select class="inp" id="fproj">${opts(PROJECTS,q.project||'','All projects')}</select>
+    <input class="inp" id="ft" placeholder="Search…" value="${esc(q.t||'')}">
+    ${q.day?`<button class="btn sm" data-clrday>Clear day ✕</button>`:''}</div>`;
+  h+=bulk?`<div class="row" style="margin-bottom:8px"><button class="btn sm" id="bulkRe" disabled>Reassign selected</button><span class="muted small" id="selN">0 selected</span>${be('bulk update')}</div>`:'';
+  h+=`<div class="tbl-wrap"><table id="actTbl"><tr>${bulk?'<th class="noexp"><input type="checkbox" id="selAll"></th>':''}<th>Date</th><th>Customer · unit</th><th>Activity</th><th>Assigned</th><th>Status</th><th>Remarks</th><th>Next follow-up</th><th class="noexp"></th></tr>`+
+   list.map(a=>{const c=cust(a.cust),b=booking(a.booking),od=openAct(a)&&dayDiff(a.date)<0,br=openAct(a)&&dayDiff(a.date)<-atype(a.type).sla;
+    return `<tr>${bulk?`<td class="noexp"><input type="checkbox" class="sel" value="${a.id}"></td>`:''}<td style="white-space:nowrap"><b>${fd(a.date)}</b><div class="sub">${esc(a.time||'')} · ${esc(a.mode)}</div>${od?`<span class="tag ${br?'red':'amber'}">${br?'past SLA':'overdue'}</span>`:''}</td>
+    <td class="click" data-cust="${c.id}" style="cursor:pointer"><b>${esc(c.name)}</b><div class="sub">${esc(unitLabel(b))}</div></td>
+    <td>${atype(a.type).ico} ${esc(atype(a.type).l)}${a.source!=='PMB'?`<div class="sub"><span class="tag grey">${esc(a.source)}</span></div>`:''}</td>
+    <td>${esc(pname(a.assignee))}${a.assignee!==c.owner?`<div class="sub">owner: ${esc(pname(c.owner))}</div>`:''}${c.cover&&coverActive(c.cover)&&a.assignee===c.cover.member?'<span class="tag amber">cover</span>':''}</td>
+    <td>${tagStatus(a.status)}</td><td style="max-width:280px" class="small">${esc(a.remarks)}${a.checklist?`<div class="sub">Checklist ${Object.values(a.checklist).filter(Boolean).length}/${Object.keys(a.checklist).length}</div>`:''}${a.snags?`<div class="sub">Snags open: ${a.snags.filter(s=>s.s!=='Closed').length}/${a.snags.length}</div>`:''}</td>
+    <td>${a.next?fd(a.next):'—'}</td><td class="noexp" style="white-space:nowrap">${can('edit')?`<button class="btn sm" data-upd="${a.id}">Update</button> <button class="btn sm" data-rea="${a.id}">Reassign</button>`:`<button class="btn sm" data-view="${a.id}">View</button>`}</td></tr>`;}).join('')+`</table>${list.length?'':'<div class="empty">No activities for these filters.</div>'}</div>
+    <div class="row" style="margin-top:10px"><button class="btn sm" id="expAct">Export CSV</button><span class="muted small">${list.length} activities</span></div>`;
+  el.innerHTML=h;
+  const g=s=>el.querySelector(s);
+  el.querySelectorAll('[data-scope]').forEach(b=>b.onclick=()=>setQ('scope',b.dataset.scope));
+  el.querySelectorAll('[data-day]').forEach(b=>b.onclick=()=>setQ('day',q.day===b.dataset.day?'':b.dataset.day));
+  if(g('[data-clrday]')) g('[data-clrday]').onclick=()=>setQ('day','');
+  g('#frange').onchange=e=>{const qq=Object.assign({},q,{range:e.target.value,day:''});go('activities',qq);};
+  g('#ftype').onchange=e=>setQ('type',e.target.value); g('#fstatus').onchange=e=>setQ('status',e.target.value);
+  g('#fmember').onchange=e=>setQ('member',e.target.value); g('#fproj').onchange=e=>setQ('project',e.target.value);
+  g('#ft').addEventListener('keydown',e=>{if(e.key==='Enter')setQ('t',e.target.value);});
+  if(g('#newAct')) g('#newAct').onclick=()=>openNewActivity();
+  el.querySelectorAll('[data-upd],[data-view]').forEach(b=>b.onclick=()=>openUpdate(S.acts.find(a=>a.id===(b.dataset.upd||b.dataset.view))));
+  el.querySelectorAll('[data-rea]').forEach(b=>b.onclick=()=>openReassign([S.acts.find(a=>a.id===b.dataset.rea)]));
+  g('#expAct').onclick=()=>tableCSV(g('#actTbl'),'delight_activities.csv');
+  if(bulk){const upd=()=>{const n=el.querySelectorAll('.sel:checked').length;g('#selN').textContent=n+' selected';g('#bulkRe').disabled=!n;};
+    el.querySelectorAll('.sel').forEach(c=>c.onchange=upd); g('#selAll').onchange=e=>{el.querySelectorAll('.sel').forEach(c=>c.checked=e.target.checked);upd();};
+    g('#bulkRe').onclick=()=>openReassign([...el.querySelectorAll('.sel:checked')].map(c=>S.acts.find(a=>a.id===c.value)));}
+};
+function openNewActivity(pre){
+  pre=pre||{}; if(!can('edit')){toast('Read-only for '+esc(ROLE_LABEL[role()]));return;}
+  const o=modal(`<h2>New activity</h2><div class="form" style="margin-top:12px">
+  <label class="full">Customer<select class="inp" name="cust">${custOpts(pre.cust||'')}</select></label>
+  <label>Booking<select class="inp" name="booking"></select></label>
+  <label>Activity type<select class="inp" name="type">${opts(ACT_TYPES.map(t=>({v:t.k,l:t.l})),pre.type||'followup')}</select></label>
+  <label>Date<input class="inp" type="date" name="date" value="${iso(MD(1))}"></label><label>Time<input class="inp" type="time" name="time" value="11:00"></label>
+  <label>Mode<select class="inp" name="mode">${opts(['In person','Virtual','Phone','At SRO','At site'])}</select></label>
+  <label>Assign to<select class="inp" name="assignee"></select></label>
+  <label class="full">Remarks<textarea class="inp" name="remarks"></textarea></label>
+  <label>Next follow-up<input class="inp" type="date" name="next"></label></div>
+  <p class="muted small">Default assignee is the customer's primary owner (or active cover). Assigning to someone else creates an <b>activity-specific</b> assignment; ownership is unchanged.</p>
+  <div class="acts"><button class="btn" data-x>Cancel</button><button class="btn pri" id="ok">Create</button></div>`);
+  const fill=()=>{const c=cust(val(o,'cust'));o.querySelector('[name=booking]').innerHTML=c?opts(c.bookings.map(b=>({v:b.id,l:unitLabel(b)+' · '+b.id}))):'';
+    const def=c?effOwner(c):SES.user; const allowed=can('assignAny')?MEMBERS:MEMBERS; o.querySelector('[name=assignee]').innerHTML=opts(allowed.map(m=>({v:m,l:pname(m)+(c&&m===c.owner?' (owner)':'')})),role()==='member'&&!c?SES.user:def);};
+  o.querySelector('[name=cust]').onchange=fill; fill();
+  o.querySelector('#ok').onclick=()=>{const c=cust(val(o,'cust')); if(!c){toast('Pick a customer');return;}
+    const t=val(o,'type'); const a={id:nextActId(),cust:c.id,booking:val(o,'booking'),type:t,date:val(o,'date'),time:val(o,'time'),mode:val(o,'mode'),assignee:val(o,'assignee'),status:'Planned',remarks:val(o,'remarks')||'—',next:val(o,'next')||null,source:'PMB',created:iso(TODAY),checklist:t==='registration'?{'ID proofs':false,'Bank NOC':false,'Stamp duty DD':false,'Photos':false,'Witness details':false}:null,snags:t==='ji'?[]:null,log:[{at:nowStr(),by:SES.user,text:'Created'+(val(o,'assignee')!==c.owner?` · activity-specific assignment to ${pname(val(o,'assignee'))}`:'')}]};
+    S.acts.push(a); audit('Created '+a.id); save(); o.remove(); toast('Activity '+a.id+' created'); render();};
+}
+function openUpdate(a){
+  const c=cust(a.cust), ro=!can('edit');
+  const o=modal(`<span class="eyebrow work">${atype(a.type).ico} ${esc(atype(a.type).l)} · ${a.id}</span><h2>${esc(c.name)}</h2><p class="muted small">${esc(unitLabel(booking(a.booking)))} · ${fd(a.date)} ${esc(a.time||'')} · ${esc(a.mode)} · assigned ${esc(pname(a.assignee))} · owner ${esc(pname(c.owner))}</p>
+  <div class="form" style="margin-top:12px"><label>Status<select class="inp" name="status" ${ro?'disabled':''}>${opts(ACT_STATUS,a.status)}</select></label><label>Reschedule date<input class="inp" type="date" name="date" value="${a.date}" ${ro?'disabled':''}></label>
+  <label class="full">Remarks / outcome<textarea class="inp" name="remarks" ${ro?'disabled':''}>${esc(a.remarks)}</textarea></label><label>Next follow-up<input class="inp" type="date" name="next" value="${a.next||''}" ${ro?'disabled':''}></label></div>
+  ${a.checklist?`<div class="card" style="margin-top:12px"><h3>Registration checklist ${be('configurable checklist')}</h3>${Object.entries(a.checklist).map(([k,v])=>`<label class="ck"><input type="checkbox" data-ck="${esc(k)}" ${v?'checked':''} ${ro?'disabled':''}> ${esc(k)}</label>`).join('')}<div class="muted small">Items to be confirmed by Delight team (MoM §7.2). Hospitality arrangements tracked in remarks.</div></div>`:''}
+  ${a.snags?`<div class="card" style="margin-top:12px"><h3>JI observations / snags ${be('snag record or ERP link')}</h3><div id="snags">${a.snags.map((s,i)=>`<div class="row" style="padding:4px 0"><input type="checkbox" data-sn="${i}" ${s.s==='Closed'?'checked':''} ${ro?'disabled':''}><span class="grow">${esc(s.t)}</span><span class="tag grey">${esc(s.team)}</span></div>`).join('')||'<div class="muted small">No snags recorded.</div>'}</div>${ro?'':`<div class="row" style="margin-top:8px"><input class="inp grow" id="snT" placeholder="New observation"><select class="inp" id="snTeam">${opts(REQ_TEAMS.slice(2),'Technical / Site')}</select><button class="btn sm" id="snAdd">Add</button></div>`}<div class="muted small" style="margin-top:6px">Tick = rectified &amp; closure communicated. System of record (PMB vs ERP/Workhall) pending confirmation.</div></div>`:''}
+  <div class="card" style="margin-top:12px"><h3>Log</h3>${a.log.map(l=>`<div class="small"><span class="muted">${fdt(l.at)} · ${esc(pname(l.by))}</span> — ${esc(l.text)}</div>`).join('')}</div>
+  <div class="acts"><button class="btn" data-x>Close</button>${ro?'':'<button class="btn pri" id="ok">Save update</button>'}</div>`);
+  const sa=o.querySelector('#snAdd'); if(sa) sa.onclick=()=>{const t=o.querySelector('#snT').value.trim(); if(!t) return; a.snags.push({t,team:o.querySelector('#snTeam').value,s:'Open'}); save(); openUpdate(a);};
+  const ok=o.querySelector('#ok'); if(ok) ok.onclick=()=>{
+    const st=val(o,'status'), nd=val(o,'date'); const ch=[];
+    if(st!==a.status) ch.push(`status ${a.status} → ${st}`); if(nd!==a.date){ch.push(`rescheduled ${fd(a.date)} → ${fd(nd)}`); if(st===a.status&&st!=='Completed') a.status='Rescheduled';}
+    if(st!==a.status) a.status=st; a.date=nd; a.remarks=val(o,'remarks'); a.next=val(o,'next')||null;
+    o.querySelectorAll('[data-ck]').forEach(x=>a.checklist[x.dataset.ck]=x.checked);
+    o.querySelectorAll('[data-sn]').forEach(x=>a.snags[+x.dataset.sn].s=x.checked?'Closed':'Open');
+    a.log.push({at:nowStr(),by:SES.user,text:(ch.join('; ')||'updated')+(a.remarks?' — '+a.remarks:'')});
+    if(a.status==='Completed'){const b=booking(a.booking),k=JOURNEY.findIndex(j=>j.k===a.type); if(k>=0&&b.journey[a.type]!=='done'){b.journey[a.type]='done'; const nx=JOURNEY[k+1]; if(nx&&b.journey[nx.k]==='pending') b.journey[nx.k]='current'; if(k+1>b.stageIdx) b.stageIdx=Math.min(k+1,5);}}
+    if(a.next&&a.status==='Completed'&&!S.acts.some(x=>x.cust===a.cust&&x.type==='followup'&&x.date===a.next)) S.acts.push({id:nextActId(),cust:a.cust,booking:a.booking,type:'followup',date:a.next,time:'11:00',mode:'Phone',assignee:a.assignee,status:'Planned',remarks:'Follow-up from '+atype(a.type).l+' ('+a.id+')',next:null,source:'PMB',created:iso(TODAY),log:[{at:nowStr(),by:SES.user,text:'Auto-created from '+a.id}]});
+    audit('Updated '+a.id); save(); o.remove(); toast('Saved'); render();};
+}
+function openReassign(list){
+  list=list.filter(Boolean); if(!list.length) return; const one=list.length===1?list[0]:null; const c=one?cust(one.cust):null;
+  const isHead=can('changeOwner');
+  const o=modal(`<h2>Reassign ${one?esc(atype(one.type).l)+' · '+esc(c.name):list.length+' activities'}</h2>
+  <div class="form" style="margin-top:12px"><label class="full">What should change?<select class="inp" name="kind">
+    <option value="act">This activity only (activity-specific assignment)</option>
+    ${one?`<option value="cover">Temporary cover for this customer (dates)${isHead?'':' — needs Delight Head approval'}</option><option value="owner">Change primary Delight owner${isHead?'':' — needs Delight Head approval'}</option>`:''}</select></label>
+  <label>Assign to<select class="inp" name="to">${memberOpts(one&&one.assignee!==c.owner?c.owner:'')}</select></label><label>Reason<input class="inp" name="reason" placeholder="Leave, simultaneous visit, language…"></label>
+  <label class="cv">Cover from<input class="inp" type="date" name="from" value="${iso(TODAY)}"></label><label class="cv">Cover to<input class="inp" type="date" name="till" value="${iso(MD(3))}"></label></div>
+  <p class="muted small">History and conversations stay with the customer — nothing is lost when work moves. RM ownership is not affected.</p>
+  <div class="acts"><button class="btn" data-x>Cancel</button><button class="btn pri" id="ok">Confirm</button></div>`);
+  const kindSel=o.querySelector('[name=kind]'); const tog=()=>o.querySelectorAll('.cv').forEach(x=>x.style.display=kindSel.value==='cover'?'':'none'); kindSel.onchange=tog; tog();
+  o.querySelector('#ok').onclick=()=>{const to=val(o,'to'),why=val(o,'reason')||'—',k=val(o,'kind');
+    if(k==='act'){ if(role()==='member'&&list.some(a=>a.assignee!==SES.user&&cust(a.cust).owner!==SES.user)){toast('Members can hand over only their own activities. Ask Delight Head or Backend.');return;}
+      list.forEach(a=>{a.log.push({at:nowStr(),by:SES.user,text:`Reassigned ${pname(a.assignee)} → ${pname(to)} (${why})`});a.assignee=to;}); audit(`Reassigned ${list.length} activities to ${pname(to)}`); save(); o.remove(); toast(list.length+' activity(ies) now with '+esc(pname(to))); render(); return;}
+    if(k==='cover'){const a=raiseApproval('Temporary cover',c.id,{member:to,from:val(o,'from'),to:val(o,'till'),reason:why}); o.remove(); toast(a.chain.every(s=>s.status==='Approved')?'Cover applied':'Sent to Delight Head for approval — '+a.id); render(); return;}
+    if(k==='owner'){const a=raiseApproval('Ownership change',c.id,{from:c.owner,to,reason:why}); o.remove(); toast(a.chain.every(s=>s.status==='Approved')?'Owner changed':'Sent to Delight Head for approval — '+a.id); render();}
+  };
+}
+function openOwner(c){
+  const o=modal(`<h2>${can('changeOwner')?'Change':'Request change of'} primary Delight owner</h2><p class="muted">${esc(c.name)} · current owner <b>${esc(pname(c.owner))}</b></p><div class="form"><label>New owner<select class="inp" name="to">${memberOpts('')}</select></label><label>Reason<input class="inp" name="r"></label></div><div class="acts"><button class="btn" data-x>Cancel</button><button class="btn pri" id="ok">${can('changeOwner')?'Change owner':'Send for approval'}</button></div>`);
+  o.querySelector('#ok').onclick=()=>{const to=val(o,'to'); if(to===c.owner){toast('Same owner');return;} const a=raiseApproval('Ownership change',c.id,{from:c.owner,to,reason:val(o,'r')||'—'}); o.remove(); toast(a.chain.every(s=>s.status==='Approved')?'Owner changed — logged on customer':'Sent for approval — '+a.id); render();};
+}
+function openCover(member,c){
+  const o=modal(`<h2>${can('changeOwner')?'Set':'Request'} temporary cover</h2><p class="muted">${c?esc(c.name)+' · owner '+esc(pname(c.owner)):'All customers of '+esc(pname(member))}</p>
+  <div class="form"><label>Covering member<select class="inp" name="m">${memberOpts(MEMBERS.find(x=>x!==member))}</select></label><label>Reason<input class="inp" name="r" placeholder="Leave / site visit / training"></label><label>From<input class="inp" type="date" name="f" value="${iso(TODAY)}"></label><label>To<input class="inp" type="date" name="t" value="${iso(MD(3))}"></label>${c?'':`<label class="full ck"><input type="checkbox" name="acts" checked> Move open activities in this period to the covering member</label>`}</div>
+  <p class="muted small">Cover ends automatically on the end date; ownership never changes.</p><div class="acts"><button class="btn" data-x>Cancel</button><button class="btn pri" id="ok">${can('changeOwner')?'Apply cover':'Send for approval'}</button></div>`);
+  o.querySelector('#ok').onclick=()=>{const d={member:val(o,'m'),from:val(o,'f'),to:val(o,'t'),reason:val(o,'r')||'—'}; if(!c) d.scope='all '+pname(member)+' customers';
+    let a; if(c) a=raiseApproval('Temporary cover',c.id,d); else {const prev=SES.user; a={id:'APR-'+String(200+S.apr.length).padStart(4,'0'),type:'Temporary cover',by:member,raised:nowStr(),cust:null,details:d,chain:[{role:'head',status:'Pending'}]}; S.apr.unshift(a); if(can('changeOwner')) decide(a,true,'Applied by '+pname(prev)); save();}
+    o.remove(); toast(a.chain.every(s=>s.status==='Approved')?'Cover applied':'Sent to Delight Head — '+a.id); render();};
+}
+
+/* ===== Communication hub ===== */
+PAGES.comms=function(el){
+  const q=ROUTE.q; let list=S.comms.slice();
+  const from=q.from||iso(MD(-30)), to=q.to||iso(TODAY);
+  list=list.filter(m=>m.at.slice(0,10)>=from&&m.at.slice(0,10)<=to);
+  if(q.ch) list=list.filter(m=>q.ch==='missed'?m.status==='Missed':m.ch===q.ch);
+  if(q.dir) list=list.filter(m=>m.dir===q.dir);
+  if(q.member) list=list.filter(m=>m.by===q.member);
+  if(q.project) list=list.filter(m=>m.booking&&booking(m.booking).project===q.project);
+  if(q.t){const t=q.t.toLowerCase();list=list.filter(m=>{const c=cust(m.cust);return (c.name+' '+(m.booking||'')+' '+c.phones.map(p=>p.num).join(' ')+' '+(m.subject||m.summary)).toLowerCase().includes(t);});}
+  list.sort((a,b)=>b.at.localeCompare(a.at));
+  const n=f=>list.filter(f).length;
+  let h=pageHeader('Communication hub','Calls (MCube), WhatsApp (Gallabox) and email in one place — filter by customer, booking, Delight member, channel and date');
+  h+=`<div class="note info">Continuity: every conversation is stored against the <b>customer and booking</b>, not the member's inbox. When ownership or cover changes, the new member sees the full history. Matches PMB's existing timeline; Delight filters are the enhancement. ${be('Delight member + booking filters')}</div>`;
+  h+=`<div class="card"><div class="stat">${[['Outbound calls',n(m=>m.ch==='call'&&m.dir==='out'),'call'],['Inbound calls',n(m=>m.ch==='call'&&m.dir==='in'),'call'],['Missed',n(m=>m.status==='Missed'),'missed'],['WhatsApp',n(m=>m.ch==='wa'),'wa'],['Email',n(m=>m.ch==='email'),'email']].map(([l,v,k])=>`<div style="cursor:pointer" data-chq="${k}"><span>${l}</span><b>${v}</b></div>`).join('')}</div></div>`;
+  h+=`<div class="filters" style="margin-top:14px"><input class="inp" id="ct" placeholder="Customer, phone, BOF…" value="${esc(q.t||'')}"><select class="inp" id="cch">${opts([{v:'call',l:'Calls'},{v:'missed',l:'Missed calls'},{v:'wa',l:'WhatsApp'},{v:'email',l:'Email'}],q.ch||'','All channels')}</select><select class="inp" id="cdir">${opts([{v:'in',l:'Inbound'},{v:'out',l:'Outbound'}],q.dir||'','Both directions')}</select><select class="inp" id="cmem">${memberOpts(q.member||'','All Delight members')}</select><select class="inp" id="cpr">${opts(PROJECTS,q.project||'','All projects')}</select><input class="inp" type="date" id="cf" value="${from}"><input class="inp" type="date" id="cto" value="${to}"></div>`;
+  h+=`<div class="tbl-wrap"><table id="cTbl"><tr><th>When</th><th>Channel</th><th>Customer · booking</th><th>Handled by</th><th>Owner</th><th>Summary</th></tr>`+list.map(m=>{const c=cust(m.cust),[cls,ic,lab]=chIcon(m);return `<tr class="click" data-m="${m.id}"><td style="white-space:nowrap">${fdt(m.at)}</td><td><span class="row"><span class="ic ${cls}" style="width:24px;height:24px;font-size:12px">${ic}</span>${lab}</span></td><td><b>${esc(c.name)}</b><div class="sub">${esc(unitLabel(booking(m.booking)))}</div></td><td>${m.by?esc(pname(m.by)):'<span class="tag red">nobody yet</span>'}${m.by&&m.by!==c.owner?' <span class="tag purple">not owner</span>':''}</td><td>${esc(pname(c.owner))}</td><td class="small">${esc(m.subject||m.summary)}</td></tr>`;}).join('')+`</table>${list.length?'':'<div class="empty">No conversations match.</div>'}</div><div class="row" style="margin-top:10px"><button class="btn sm" id="cexp">Export CSV</button><span class="muted small">${list.length} items</span></div>`;
+  el.innerHTML=h; const g=s=>el.querySelector(s);
+  g('#ct').addEventListener('keydown',e=>{if(e.key==='Enter')setQ('t',e.target.value);});
+  [['#cch','ch'],['#cdir','dir'],['#cmem','member'],['#cpr','project'],['#cf','from'],['#cto','to']].forEach(([s,k])=>g(s).onchange=e=>setQ(k,e.target.value));
+  el.querySelectorAll('[data-chq]').forEach(b=>b.onclick=()=>setQ('ch',b.dataset.chq));
+  el.querySelectorAll('[data-m]').forEach(r=>r.onclick=()=>openMsg(S.comms.find(m=>m.id===r.dataset.m)));
+  g('#cexp').onclick=()=>tableCSV(g('#cTbl'),'delight_communication.csv');
+};
+
+/* ===== Requests & escalations ===== */
+PAGES.requests=function(el){
+  const q=ROUTE.q, scope=q.scope||defScope(); let list=S.reqs.slice();
+  if(scope==='mine') list=list.filter(r=>r.assignee===SES.user);
+  if(q.status) list=list.filter(r=>r.status===q.status); else if(!q.showall) list=list.filter(r=>!['Closed'].includes(r.status));
+  ['cat','source','team'].forEach(k=>{if(q[k]) list=list.filter(r=>r[k]===q[k]);});
+  if(q.level) list=list.filter(r=>r.level>=+q.level);
+  list.sort((a,b)=>b.level-a.level||a.due.localeCompare(b.due));
+  const all=scope==='mine'?S.reqs.filter(r=>r.assignee===SES.user):S.reqs;
+  const open=all.filter(r=>!['Resolved','Closed'].includes(r.status));
+  let h=pageHeader('Customer requests & escalations','Queries and complaints from calls, WhatsApp, email, the customer portal or in person — tracked to closure',can('edit')?'<button class="btn pri" id="nr">+ Register request</button>':'');
+  h+=`<div class="note">PMB gives <b>one view</b> of customer concerns. It does <b>not</b> replace ERP / customer-portal / Workhall ticketing — those keep their ticket number in “External ref”, and PMB's existing Tickets can be linked. Final workflow pending evaluation (MoM §4). ${be('link to ERP/portal tickets')}</div>`;
+  h+=`<div class="grid g5">`+kpi(open.length,'Open','not resolved',`requests?scope=${scope}`)+kpi(open.filter(r=>r.status==='Waiting on internal team').length,'Waiting on internal team','site, legal, accounts…',`requests?scope=${scope}&status=Waiting on internal team`,'amber')+kpi(open.filter(r=>r.status==='Escalated').length,'Escalated','L2 Delight Head / L3 CSMO',`requests?scope=${scope}&status=Escalated`,'red')+kpi(open.filter(r=>dayDiff(r.due)<0).length,'Past due date','SLA breached',`requests?scope=${scope}`,'red')+kpi(all.filter(r=>r.status==='Resolved'||r.status==='Closed').length,'Resolved / closed','',`requests?scope=${scope}&showall=1&status=Resolved`,'grey')+`</div>`;
+  h+=`<div class="filters" style="margin-top:14px"><div class="seg">${['mine','all'].map(s=>`<button data-scope="${s}" class="${scope===s?'on':''}">${s==='mine'?'Mine':'Team'}</button>`).join('')}</div><select class="inp" id="rs">${opts(REQ_STATUS,q.status||'','Open statuses')}</select><select class="inp" id="rc">${opts(REQ_CATS,q.cat||'','All categories')}</select><select class="inp" id="rsrc">${opts(REQ_SOURCES,q.source||'','All sources')}</select><select class="inp" id="rt">${opts(REQ_TEAMS,q.team||'','All teams')}</select><select class="inp" id="rl">${opts([{v:'2',l:'L2 and above'},{v:'3',l:'L3 only'}],q.level||'','All levels')}</select></div>`;
+  h+=`<div class="tbl-wrap"><table id="rTbl"><tr><th>ID</th><th>Customer · unit</th><th>Request</th><th>Source</th><th>Category</th><th>Team · person</th><th>Level</th><th>Due</th><th>Status</th><th>External ref</th></tr>`+list.map(r=>{const c=cust(r.cust);return `<tr class="click" data-r="${r.id}"><td class="mono">${r.id}</td><td><b>${esc(c.name)}</b><div class="sub">${esc(unitLabel(booking(r.booking)))}</div></td><td style="max-width:260px">${esc(r.title)}</td><td class="small">${esc(r.source)}</td><td class="small">${esc(r.cat)}</td><td class="small">${esc(r.team)}<div class="sub">${esc(pname(r.assignee))}</div></td><td><span class="tag ${r.level===3?'red':r.level===2?'amber':'grey'}">L${r.level}</span></td><td>${fd(r.due)}${dayDiff(r.due)<0&&!['Resolved','Closed'].includes(r.status)?' <span class="tag red">late</span>':''}</td><td>${tagStatus(r.status)}</td><td class="small mono">${esc(r.extRef||'—')}</td></tr>`;}).join('')+`</table>${list.length?'':'<div class="empty">Nothing here.</div>'}</div><div class="row" style="margin-top:10px"><button class="btn sm" id="rexp">Export CSV</button></div>`;
+  el.innerHTML=h; const g=s=>el.querySelector(s);
+  el.querySelectorAll('[data-scope]').forEach(b=>b.onclick=()=>setQ('scope',b.dataset.scope));
+  [['#rs','status'],['#rc','cat'],['#rsrc','source'],['#rt','team'],['#rl','level']].forEach(([s,k])=>g(s).onchange=e=>setQ(k,e.target.value));
+  el.querySelectorAll('[data-r]').forEach(r=>r.onclick=()=>openReq(S.reqs.find(x=>x.id===r.dataset.r)));
+  if(g('#nr')) g('#nr').onclick=()=>openNewReq();
+  g('#rexp').onclick=()=>tableCSV(g('#rTbl'),'delight_requests.csv');
+};
+function openNewReq(pre){
+  pre=pre||{}; if(!can('edit')){toast('Read-only');return;}
+  const o=modal(`<h2>Register customer request</h2><div class="form" style="margin-top:12px"><label class="full">Customer<select class="inp" name="cust">${custOpts(pre.cust||'')}</select></label><label>Booking<select class="inp" name="booking"></select></label><label>Source of communication<select class="inp" name="source">${opts(REQ_SOURCES)}</select></label><label class="full">Request<input class="inp" name="title" placeholder="What does the customer need?"></label><label>Category<select class="inp" name="cat">${opts(REQ_CATS)}</select></label><label>Assigned team<select class="inp" name="team">${opts(REQ_TEAMS)}</select></label><label>Delight owner of follow-up<select class="inp" name="who">${memberOpts(SES.user)}</select></label><label>Due date<input class="inp" type="date" name="due" value="${iso(MD(3))}"></label><label class="full">External ref (ERP / portal / Workhall / PMB ticket)<input class="inp" name="ext" placeholder="e.g. ERP ticket CP-4471"></label></div><p class="muted small">Payment queries route to the RM; customization to the Customization desk — Delight keeps the customer informed.</p><div class="acts"><button class="btn" data-x>Cancel</button><button class="btn pri" id="ok">Register</button></div>`);
+  const fill=()=>{const c=cust(val(o,'cust'));o.querySelector('[name=booking]').innerHTML=c?opts(c.bookings.map(b=>({v:b.id,l:unitLabel(b)}))):'';if(c&&role()!=='member')o.querySelector('[name=who]').value=effOwner(c);};
+  o.querySelector('[name=cust]').onchange=fill; fill();
+  o.querySelector('[name=cat]').onchange=e=>{const m={'Payment query (→ RM)':'RM / CRM','Customization (→ Customization desk)':'Customization','Snag / Quality':'Technical / Site','Name transfer / EB-Patta':'Liaison (EB / Patta)','Registration':'Legal'};if(m[e.target.value])o.querySelector('[name=team]').value=m[e.target.value];};
+  o.querySelector('#ok').onclick=()=>{const c=cust(val(o,'cust')); if(!c||!val(o,'title')){toast('Customer and request are required');return;}
+    const r={id:'DLR-'+(201+S.reqs.length),cust:c.id,booking:val(o,'booking'),cat:val(o,'cat'),source:val(o,'source'),team:val(o,'team'),assignee:val(o,'who'),status:'Open',raised:iso(TODAY),due:val(o,'due'),level:1,title:val(o,'title'),extRef:val(o,'ext'),history:[{at:nowStr(),by:SES.user,text:'Registered from '+val(o,'source')}]};
+    S.reqs.unshift(r); audit('Registered '+r.id); save(); o.remove(); toast('Request '+r.id+' registered'); render();};
+}
+function openReq(r){
+  const c=cust(r.cust), ed=can('edit');
+  const d=drawer(`<span class="eyebrow work">${r.id} · L${r.level}</span><h2>${esc(r.title)}</h2><p class="muted">${esc(c.name)} · ${esc(unitLabel(booking(r.booking)))} · <a href="#/customer/${c.id}">open 360 →</a></p>
+  <dl class="kv"><dt>Source</dt><dd>${esc(r.source)}</dd><dt>Category</dt><dd>${esc(r.cat)}</dd><dt>Team</dt><dd>${esc(r.team)}</dd><dt>Delight follow-up</dt><dd>${esc(pname(r.assignee))}</dd><dt>Raised · due</dt><dd>${fd(r.raised)} · ${fd(r.due)}</dd><dt>Status</dt><dd>${tagStatus(r.status)}</dd><dt>External ref</dt><dd class="mono">${esc(r.extRef||'—')}</dd></dl>
+  <h3 style="margin-top:16px">Follow-up history</h3><div class="tl">${r.history.map(x=>`<div class="tl-i"><div class="ic nt">↻</div><div><div class="h"><b>${esc(pname(x.by))}</b><span>${fdt(x.at)}</span></div><div class="b small">${esc(x.text)}</div></div></div>`).join('')}</div>
+  ${ed?`<div class="card" style="margin-top:12px"><div class="form"><label>Status<select class="inp" name="st">${opts(REQ_STATUS,r.status)}</select></label><label>Reassign follow-up<select class="inp" name="as">${memberOpts(r.assignee)}</select></label><label>Team<select class="inp" name="tm">${opts(REQ_TEAMS,r.team)}</select></label><label>External ref<input class="inp" name="ext" value="${esc(r.extRef)}"></label><label class="full">Update / resolution note<textarea class="inp" name="nt"></textarea></label></div><div class="row" style="margin-top:10px"><button class="btn pri" id="sv">Save update</button>${r.level<3?`<button class="btn danger" id="esc">Escalate to L${r.level+1} (${r.level===1?'Delight Head':'CRM Head / CSMO'})</button>`:''}</div></div>`:'<div class="note" style="margin-top:12px">Read-only for your role.</div>'}`);
+  if(!ed) return;
+  d.querySelector('#sv').onclick=()=>{const st=val(d,'st'),nt=val(d,'nt'); const ch=[]; if(st!==r.status) ch.push('Status → '+st); if(val(d,'as')!==r.assignee) ch.push('Follow-up → '+pname(val(d,'as'))); if(val(d,'tm')!==r.team) ch.push('Team → '+val(d,'tm')); if(val(d,'ext')!==r.extRef) ch.push('Ext ref '+val(d,'ext'));
+    r.status=st;r.assignee=val(d,'as');r.team=val(d,'tm');r.extRef=val(d,'ext'); r.history.push({at:nowStr(),by:SES.user,text:(ch.join('; ')+(nt?(ch.length?' — ':'')+nt:''))||'Updated'}); if(st==='Resolved'||st==='Closed') r.history.push({at:nowStr(),by:SES.user,text:'Closure communicated to customer'}); save(); closeOv(); toast('Saved'); render();};
+  const e=d.querySelector('#esc'); if(e) e.onclick=()=>{r.level++; r.status='Escalated'; r.history.push({at:nowStr(),by:SES.user,text:`Escalated to L${r.level} — ${r.level===2?'Delight Head':'CRM Head / CSMO'}`+(val(d,'nt')?': '+val(d,'nt'):'')});
+    if(r.level===3) raiseApproval('Customer exception',r.cust,{reason:r.title+(val(d,'nt')?' — '+val(d,'nt'):'')},r.id); save(); closeOv(); toast('Escalated to L'+r.level); render();};
+}
+
+/* ===== Referrals ===== */
+PAGES.referrals=function(el){
+  const q=ROUTE.q, tab=q.tab||'dash';
+  let h=pageHeader('Referral management','Referrals from existing customers — capture, hand to Sales, track site visit and booking, control the payout. Requested by the Operations Head.',can('edit')?'<button class="btn pri" id="nf">+ Capture referral</button>':'');
+  h+=`<div class="tabs"><button data-tab="dash" class="${tab==='dash'?'on':''}">Performance</button><button data-tab="register" class="${tab==='register'?'on':''}">Referral register</button></div>`;
+  if(tab==='dash') h+=refDash(); else h+=refRegister(q);
+  el.innerHTML=h; const g=s=>el.querySelector(s);
+  el.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>go('referrals',{tab:b.dataset.tab}));
+  if(g('#nf')) g('#nf').onclick=()=>openNewRef();
+  el.querySelectorAll('[data-rf]').forEach(r=>r.onclick=()=>openRef(S.refs.find(x=>x.id===r.dataset.rf)));
+  [['#fs','status'],['#fm','member'],['#fp','pay'],['#fpr','interest']].forEach(([s,k])=>{if(g(s)) g(s).onchange=e=>setQ(k,e.target.value);});
+  if(g('#fexp')) g('#fexp').onclick=()=>tableCSV(g('#fTbl'),'delight_referrals.csv');
+};
+function refDash(){
+  const R=S.refs, n=s=>R.filter(r=>REF_STATUS.indexOf(r.status)>=REF_STATUS.indexOf(s)&&r.status!=='Dropped').length;
+  const booked=R.filter(r=>r.status==='Booked'), sv=R.filter(r=>r.siteVisit&&r.siteVisit.status==='Done').length;
+  const paid=R.filter(r=>r.payout.status==='Paid').reduce((s,r)=>s+r.payout.amount,0), pend=R.filter(r=>['Requested','Verified','Head approved','CSMO approved'].includes(r.payout.status));
+  let h=`<div class="grid g5">`+kpi(R.length,'Referrals','all time','referrals?tab=register')+kpi(sv,'Site visits done',`${R.filter(r=>r.siteVisit&&r.siteVisit.status==='Scheduled').length} scheduled`,'referrals?tab=register&status=Site visit done')+kpi(booked.length,'Booked',`${Math.round(booked.length/Math.max(1,R.length)*100)}% conversion`,'referrals?tab=register&status=Booked')+kpi(money(booked.reduce((s,r)=>s+r.booking.value,0)/100000).replace('Rs ','Rs ')+' L','Booking value','from referrals','referrals?tab=register&status=Booked')+kpi(pend.length,'Payouts in approval',money(pend.reduce((s,r)=>s+r.payout.amount,0)),'approvals',pend.length?'amber':'grey')+`</div>`;
+  h+=`<div class="grid g2" style="margin-top:14px"><div class="card"><h3>Funnel</h3>${['New','Shared with Sales','Contacted','Site visit scheduled','Site visit done','Booked'].map(s=>`<div class="fn-row"><span>${s}</span><div class="bar"><i style="width:${Math.round(n(s)/Math.max(1,R.length)*100)}%"></i></div><b>${n(s)}</b></div>`).join('')}<div class="muted small">Dropped: ${R.filter(r=>r.status==='Dropped').length} · Paid out: ${money(paid)}</div></div>
+  <div class="card"><h3>By Delight member</h3><table><tr><th>Member</th><th>Referrals</th><th>Site visits</th><th>Booked</th><th>Conv.</th></tr>${MEMBERS.map(m=>{const x=R.filter(r=>r.member===m),b=x.filter(r=>r.status==='Booked').length;return `<tr><td>${esc(pname(m))}</td><td>${x.length}</td><td>${x.filter(r=>r.siteVisit&&r.siteVisit.status==='Done').length}</td><td>${b}</td><td>${x.length?Math.round(b/x.length*100)+'%':'—'}</td></tr>`;}).join('')}</table></div></div>`;
+  const top={}; R.forEach(r=>{top[r.referrer]=(top[r.referrer]||0)+1;});
+  h+=`<div class="grid g2" style="margin-top:14px"><div class="card"><h3>Top referring customers</h3>${Object.entries(top).sort((a,b)=>b[1]-a[1]).slice(0,6).map(([c,k])=>`<div class="row between" style="padding:5px 0;border-bottom:1px solid #f0efe7;cursor:pointer" data-cust="${c}"><span><b>${esc(cust(c).name)}</b> <span class="muted small">${esc(unitLabel(cust(c).bookings[0]))}</span></span><span class="tag">${k}</span></div>`).join('')}</div>
+  <div class="card"><h3>By project of interest</h3>${PROJECTS.filter(p=>R.some(r=>r.interest===p)).map(p=>{const x=R.filter(r=>r.interest===p);return `<div class="fn-row"><span class="small">${esc(p)}</span><div class="bar amber"><i style="width:${x.length/R.length*100*2}%"></i></div><b>${x.length}</b></div>`;}).join('')}</div></div>`;
+  return h;
+}
+function refRegister(q){
+  let L=S.refs.slice(); if(q.status) L=L.filter(r=>r.status===q.status); if(q.member) L=L.filter(r=>r.member===q.member); if(q.pay) L=L.filter(r=>r.payout.status===q.pay); if(q.interest) L=L.filter(r=>r.interest===q.interest);
+  L.sort((a,b)=>b.date.localeCompare(a.date));
+  return `<div class="filters"><select class="inp" id="fs">${opts(REF_STATUS,q.status||'','All statuses')}</select><select class="inp" id="fm">${memberOpts(q.member||'','All members')}</select><select class="inp" id="fp">${opts(PAY_STATUS,q.pay||'','Any payout status')}</select><select class="inp" id="fpr">${opts(PROJECTS,q.interest||'','Any project')}</select></div>
+  <div class="tbl-wrap"><table id="fTbl"><tr><th>ID</th><th>Date · source</th><th>Referring customer · unit</th><th>Prospect</th><th>Interest</th><th>Delight member</th><th>Status</th><th>Site visit</th><th>Booking</th><th>Payout</th></tr>${L.map(r=>{const c=cust(r.referrer);return `<tr class="click" data-rf="${r.id}"><td class="mono">${r.id}</td><td>${fd(r.date)}<div class="sub">${esc(r.source)}</div></td><td><b>${esc(c.name)}</b><div class="sub">${esc(unitLabel(booking(r.refBooking)))} · ${r.refBooking}</div></td><td>${esc(r.prospect)}<div class="sub">${esc(r.prospectPhone)}</div></td><td class="small">${esc(r.interest)}</td><td>${esc(pname(r.member))}${r.sales?`<div class="sub">${esc(r.sales)}</div>`:''}</td><td>${tagStatus(r.status)}</td><td class="small">${esc(r.siteVisit.status)}${r.siteVisit.date?' · '+fd(r.siteVisit.date):''}</td><td class="small">${r.booking?esc(r.booking.bof)+'<div class="sub">'+fd(r.booking.date)+'</div>':'—'}</td><td>${tagStatus(r.payout.status)}${r.payout.amount?`<div class="sub">${money(r.payout.amount)}</div>`:''}</td></tr>`;}).join('')}</table></div><div class="row" style="margin-top:10px"><button class="btn sm" id="fexp">Export CSV</button><span class="muted small">${L.length} referrals</span></div>`;
+}
+function openNewRef(pre){
+  pre=pre||{}; if(!can('edit')){toast('Read-only');return;}
+  const o=modal(`<h2>Capture referral</h2><div class="form" style="margin-top:12px"><label class="full">Referring customer<select class="inp" name="c">${custOpts(pre.referrer||'')}</select></label><label>Referring booking / unit<select class="inp" name="b"></select></label><label>Source<select class="inp" name="src">${opts(['Inbound call','Referral call','WhatsApp','Email','Community event','In person','Customer portal'])}</select></label><label>Prospect name<input class="inp" name="pn"></label><label>Prospect phone<input class="inp" name="pp" placeholder="+91 …"></label><label>Project of interest<select class="inp" name="pi">${opts(PROJECTS)}</select></label><label>Delight member<select class="inp" name="m">${memberOpts(role()==='member'?SES.user:'')}</select></label><label class="full">Notes<input class="inp" name="nt" placeholder="Budget, configuration, timeline…"></label></div><div id="dup"></div><div class="acts"><button class="btn" data-x>Cancel</button><button class="btn pri" id="ok">Save referral</button></div>`);
+  const fill=()=>{const c=cust(val(o,'c'));o.querySelector('[name=b]').innerHTML=c?opts(c.bookings.map(b=>({v:b.id,l:unitLabel(b)+' · '+b.id}))):'';}; o.querySelector('[name=c]').onchange=fill; fill();
+  o.querySelector('[name=pp]').oninput=e=>{const v=e.target.value.replace(/\s/g,''); const d=v.length>6&&S.refs.find(r=>r.prospectPhone.replace(/\s/g,'').includes(v)); o.querySelector('#dup').innerHTML=d?`<div class="note">Possible duplicate: ${esc(d.prospect)} already referred (${d.id}, ${esc(d.status)}). Check with Sales before saving. ${be('dedupe vs sales CRM')}</div>`:'';};
+  o.querySelector('#ok').onclick=()=>{const c=cust(val(o,'c')); if(!c||!val(o,'pn')){toast('Referring customer and prospect name are required');return;}
+    const r={id:'REF-'+(301+S.refs.length),referrer:c.id,refBooking:val(o,'b'),prospect:val(o,'pn'),prospectPhone:val(o,'pp')||'—',interest:val(o,'pi'),date:iso(TODAY),source:val(o,'src'),member:val(o,'m'),sales:'',status:'New',siteVisit:{status:'Not yet'},booking:null,payout:{status:'Not due',amount:0},history:[{at:nowStr(),by:SES.user,text:'Referral captured'+(val(o,'nt')?': '+val(o,'nt'):'')}]};
+    S.refs.unshift(r); audit('Captured '+r.id); save(); o.remove(); toast('Referral '+r.id+' saved'); go('referrals',{tab:'register'});};
+}
+function openRef(r){
+  const c=cust(r.referrer), ed=can('edit');
+  const pa=S.apr.find(a=>a.type==='Referral payout'&&a.details.ref===r.id);
+  const d=drawer(`<span class="eyebrow work">${r.id}</span><h2>${esc(r.prospect)}</h2><p class="muted">Referred by <a href="#/customer/${c.id}">${esc(c.name)}</a> · ${esc(unitLabel(booking(r.refBooking)))} · ${r.refBooking}</p>
+  <dl class="kv"><dt>Prospect phone</dt><dd>${esc(r.prospectPhone)}</dd><dt>Interest</dt><dd>${esc(r.interest)}</dd><dt>Date · source</dt><dd>${fd(r.date)} · ${esc(r.source)}</dd><dt>Delight member</dt><dd>${esc(pname(r.member))}</dd><dt>Sales contact</dt><dd>${esc(r.sales||'— not yet shared')}</dd><dt>Status</dt><dd>${tagStatus(r.status)}</dd><dt>Site visit</dt><dd>${esc(r.siteVisit.status)}${r.siteVisit.date?' · '+fd(r.siteVisit.date):''}</dd><dt>Booking</dt><dd>${r.booking?`${esc(r.booking.bof)} · ${fd(r.booking.date)} · ${money(r.booking.value)}`:'—'}</dd></dl>
+  ${ed?`<div class="card" style="margin-top:12px"><h3>Update status ${be('sync with sales system')}</h3><div class="form"><label>Status<select class="inp" name="st">${opts(REF_STATUS,r.status)}</select></label><label>Sales contact<input class="inp" name="sl" value="${esc(r.sales)}"></label><label>Site visit<select class="inp" name="sv">${opts(['Not yet','Scheduled','Done','No show'],r.siteVisit.status)}</select></label><label>Site visit date<input class="inp" type="date" name="svd" value="${r.siteVisit.date||''}"></label><label>Booking no. (if booked)<input class="inp" name="bf" value="${r.booking?esc(r.booking.bof):''}"></label><label>Booking value (Rs)<input class="inp" name="bv" value="${r.booking?r.booking.value:''}"></label></div><button class="btn pri" style="margin-top:10px" id="sv">Save</button></div>`:''}
+  <div class="card" style="margin-top:12px"><h3>Payout</h3><dl class="kv"><dt>Status</dt><dd>${tagStatus(r.payout.status)}</dd><dt>Amount</dt><dd>${r.payout.amount?money(r.payout.amount):'—'}</dd><dt>Eligibility</dt><dd>${r.status==='Booked'?'Booked ✓ — rule to confirm (e.g. agreement registered / % collected)':'Not eligible until booked'} ${ui('rule TBC')}</dd>${r.payout.ref?`<dt>Payment ref</dt><dd class="mono">${esc(r.payout.ref)} · ${fd(r.payout.paidOn)}</dd>`:''}</dl>
+   ${pa?`<div class="chain">${chainHtml(pa)}</div>`:''}
+   <div class="row" style="margin-top:10px">${r.status==='Booked'&&['Not due','Rejected'].includes(r.payout.status)&&ed?'<button class="btn warn" id="rq">Request payout</button>':''}${r.payout.status==='CSMO approved'&&can('markPaid')?'<button class="btn pri" id="pd">Mark paid (Accounts ref)</button>':''}${pa&&canActOn(pa)?'<a class="btn" href="#/approvals">Open in Approvals →</a>':''}</div></div>
+  <h3 style="margin-top:14px">History</h3>${r.history.map(x=>`<div class="small"><span class="muted">${fdt(x.at)} · ${esc(pname(x.by))}</span> — ${esc(x.text)}</div>`).join('')}`);
+  const sv=d.querySelector('#sv'); if(sv) sv.onclick=()=>{const st=val(d,'st'); const ch=[]; if(st!==r.status) ch.push('Status → '+st); r.status=st; r.sales=val(d,'sl'); r.siteVisit={status:val(d,'sv'),date:val(d,'svd')||null}; if(val(d,'bf')) r.booking={bof:val(d,'bf'),date:r.booking?r.booking.date:iso(TODAY),value:+val(d,'bv')||0}; r.history.push({at:nowStr(),by:SES.user,text:ch.join('; ')||'Updated'}); save(); closeOv(); toast('Saved'); render();};
+  const rq=d.querySelector('#rq'); if(rq) rq.onclick=()=>{const amt=prompt('Payout amount (Rs) — policy to be confirmed','50000'); if(!amt) return; r.payout={status:'Requested',amount:+amt||0}; r.history.push({at:nowStr(),by:SES.user,text:'Payout requested'}); const a=raiseApproval('Referral payout',r.referrer,{ref:r.id,amount:+amt||0},r.id); save(); closeOv(); toast('Payout request '+a.id+' → Backend verification → Delight Head → CRM Head / CSMO'); render();};
+  const pd=d.querySelector('#pd'); if(pd) pd.onclick=()=>{const ref=prompt('Accounts payment reference (UTR)','DEMO-UTR-'); if(!ref) return; r.payout.status='Paid'; r.payout.ref=ref; r.payout.paidOn=iso(TODAY); r.history.push({at:nowStr(),by:SES.user,text:'Marked paid — '+ref}); audit('Payout paid '+r.id); save(); closeOv(); toast('Marked paid'); render();};
+}
+
+/* ===== Approvals ===== */
+function chainHtml(a){return `<span class="ch ok">Raised · ${esc(pname(a.by))}</span>`+a.chain.map(s=>`<span class="arrow">→</span><span class="ch ${s.status==='Approved'?'ok':s.status==='Pending'?'wait':s.status==='Rejected'?'no':''}" title="${esc(s.c||'')}">${esc(ROLE_LABEL[s.role])} · ${esc(s.status)}${s.by?' · '+esc(pname(s.by)):''}</span>`).join('');}
+PAGES.approvals=function(el){
+  const tab=ROUTE.q.tab||'mine'; const r=role();
+  const T={mine:a=>canActOn(a),raised:a=>a.by===SES.user,open:a=>a.chain.some(s=>s.status==='Pending'),done:a=>!a.chain.some(s=>s.status==='Pending')};
+  const list=S.apr.filter(T[tab]||T.mine).sort((a,b)=>b.raised.localeCompare(a.raised));
+  let h=pageHeader('Approvals',`Delight approval types alongside PMB's existing deferment and waiver approvals. ${r==='crm'?'You approve referral payouts and customer exceptions at the final step.':r==='head'?'You approve cover, ownership changes, payouts (2nd step) and exceptions (1st step).':''}`);
+  h+=`<div class="grid g4" style="margin-bottom:14px">${[['Temporary cover','Delight Head'],['Ownership change','Delight Head'],['Referral payout','Backend verify → Delight Head → CRM Head / CSMO → Backend marks paid'],['Customer exception','Delight Head → CRM Head / CSMO']].map(([t,c])=>`<div class="card"><b>${t}</b><div class="small muted">${c}</div></div>`).join('')}</div>`;
+  h+=`<div class="tabs">${[['mine',`Waiting for me (${S.apr.filter(T.mine).length})`],['raised','Raised by me'],['open','All open'],['done','Completed']].map(([k,l])=>`<button data-tab="${k}" class="${tab===k?'on':''}">${l}</button>`).join('')}</div>`;
+  h+=list.map(a=>`<div class="card"><div class="row between"><div class="row"><span class="tag ${a.type==='Referral payout'?'purple':a.type==='Customer exception'?'red':'blue'}">${esc(a.type)}</span><span class="mono">${a.id}</span><span class="muted small">raised ${fdt(a.raised)} by ${esc(pname(a.by))}</span></div>${a.cust?`<a class="small" href="#/customer/${a.cust}">${esc(cust(a.cust).name)} →</a>`:''}</div><div style="margin-top:8px">${aprSummary(a)}</div><div class="chain">${chainHtml(a)}</div>${a.chain.filter(s=>s.c).map(s=>`<div class="small muted" style="margin-top:4px">“${esc(s.c)}” — ${esc(pname(s.by))}</div>`).join('')}
+   ${canActOn(a)?`<div class="row" style="margin-top:10px"><input class="inp grow" placeholder="Comment (optional)" data-cm="${a.id}"><button class="btn pri sm" data-ok="${a.id}">Approve</button><button class="btn danger sm" data-no="${a.id}">Reject</button></div>`:''}</div>`).join('')||'<div class="card empty">Nothing in this list.</div>';
+  el.innerHTML=h;
+  el.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>go('approvals',{tab:b.dataset.tab}));
+  const act=(id,ok)=>{const a=S.apr.find(x=>x.id===id); decide(a,ok,(el.querySelector(`[data-cm="${id}"]`)||{}).value); toast(`${id} ${ok?'approved':'rejected'}`); render();};
+  el.querySelectorAll('[data-ok]').forEach(b=>b.onclick=()=>act(b.dataset.ok,true));
+  el.querySelectorAll('[data-no]').forEach(b=>b.onclick=()=>act(b.dataset.no,false));
+};
+
+/* ===== Team monitor ===== */
+PAGES.team=function(el){
+  const head=can('changeOwner');
+  let h=pageHeader('Team monitor','Ownership, temporary cover, workload and SLA across the Delight team. RM ownership is shown for reference and is never changed here.');
+  h+=memberTable();
+  h+=`<div class="sec-t">Leave &amp; availability</div><div class="card"><div class="row between"><div>Plan a member's absence: set a covering member for all their customers and move open activities in that period. ${be('cover routing')}</div>${head?'':'<span class="muted small">Only Delight Head / Admin can apply cover directly; members request it from the customer page.</span>'}</div><div class="row" style="margin-top:10px">${MEMBERS.map(m=>`<button class="btn sm" data-cov="${m}" ${head?'':'disabled'}>${esc(pname(m))} away…</button>`).join('')}</div></div>`;
+  const covers=S.customers.filter(c=>c.cover);
+  h+=`<div class="sec-t">Active &amp; scheduled cover</div><div class="tbl-wrap"><table><tr><th>Customer</th><th>Owner</th><th>Covered by</th><th>Period</th><th>Reason</th><th>Approval</th></tr>${covers.map(c=>`<tr class="click" data-cust="${c.id}"><td><b>${esc(c.name)}</b></td><td>${esc(pname(c.owner))}</td><td>${esc(pname(c.cover.member))}</td><td>${fd(c.cover.from)} → ${fd(c.cover.to)} ${coverActive(c.cover)?'<span class="tag amber">active</span>':'<span class="tag grey">'+(dayDiff(c.cover.to)<0?'ended':'scheduled')+'</span>'}</td><td class="small">${esc(c.cover.reason)}</td><td class="mono small">${esc(c.cover.approval||'—')}</td></tr>`).join('')||'<tr><td colspan="6" class="empty">No cover in place.</td></tr>'}</table></div>`;
+  h+=`<div class="sec-t">Ownership register</div><div class="filters"><select class="inp" id="tow">${memberOpts(ROUTE.q.owner||'','All owners')}</select><select class="inp" id="tpr">${opts(PROJECTS,ROUTE.q.project||'','All projects')}</select></div>`;
+  let L=S.customers.slice(); if(ROUTE.q.owner) L=L.filter(c=>c.owner===ROUTE.q.owner); if(ROUTE.q.project) L=L.filter(c=>c.bookings.some(b=>b.project===ROUTE.q.project));
+  h+=`<div class="tbl-wrap"><table id="owTbl"><tr><th>Customer</th><th>Booking(s)</th><th>Journey</th><th>RM (read-only)</th><th>Primary Delight owner</th><th>Last contact</th></tr>${L.map(c=>{const last=S.comms.filter(m=>m.cust===c.id).sort((a,b)=>b.at.localeCompare(a.at))[0];const b=c.bookings[0];return `<tr><td class="click" data-cust="${c.id}" style="cursor:pointer"><b>${esc(c.name)}</b></td><td class="small">${c.bookings.map(x=>esc(unitLabel(x))).join('<br>')}</td><td>${esc(b.stageIdx===5?'Engagement':JOURNEY[b.stageIdx].l)}</td><td class="small muted">${esc(b.rm)}</td><td>${head?`<select class="inp" data-own="${c.id}">${memberOpts(c.owner)}</select>`:esc(pname(c.owner))}</td><td class="small">${last?fdt(last.at)+' · '+esc(pname(last.by)):'—'}</td></tr>`;}).join('')}</table></div>`;
+  const breach=S.acts.filter(a=>openAct(a)&&dayDiff(a.date)<-atype(a.type).sla);
+  h+=`<div class="sec-t">SLA breaches (${breach.length})</div><div class="card">${actMiniList(breach,false)}</div>`;
+  el.innerHTML=h;
+  el.querySelectorAll('[data-cov]').forEach(b=>b.onclick=()=>openCover(b.dataset.cov,null));
+  el.querySelector('#tow').onchange=e=>setQ('owner',e.target.value); el.querySelector('#tpr').onchange=e=>setQ('project',e.target.value);
+  el.querySelectorAll('[data-own]').forEach(s=>s.onchange=()=>{const c=cust(s.dataset.own); raiseApproval('Ownership change',c.id,{from:c.owner,to:s.value,reason:'Changed by Delight Head in ownership register'}); toast('Owner of '+esc(c.name)+' → '+esc(pname(s.value))+' (logged)'); render();});
+};
+
+/* ===== Reports ===== */
+PAGES.reports=function(el){
+  const q=ROUTE.q, tab=q.tab||'daily', from=q.from||iso(MD(-7)), to=q.to||iso(MD(7));
+  const mem=role()==='member'?SES.user:(q.member||''), proj=q.project||'';
+  const inR=s=>s.slice(0,10)>=from&&s.slice(0,10)<=to;
+  const aF=a=>(!mem||a.assignee===mem)&&(!proj||booking(a.booking).project===proj);
+  const tabs=[['daily','Daily Delight activities'],['pending','Pending follow-ups'],['engage','Customer engagement'],['comm','Communication activity'],['ref','Referral performance'],['member','Member-wise summary']];
+  let h=pageHeader('Reports & tracking',role()==='member'?'Your own activity (members see their scope; the Delight Head sees the team).':'Filters apply to every report. Export or print for review meetings.');
+  h+=`<div class="tabs">${tabs.map(([k,l])=>`<button data-tab="${k}" class="${tab===k?'on':''}">${l}</button>`).join('')}</div>`;
+  h+=`<div class="filters"><label class="small muted">From</label><input class="inp" type="date" id="rf" value="${from}"><label class="small muted">To</label><input class="inp" type="date" id="rto" value="${to}">${role()==='member'?'':`<select class="inp" id="rm">${memberOpts(mem,'All members')}</select>`}<select class="inp" id="rp">${opts(PROJECTS,proj,'All projects')}</select><button class="btn sm" id="rx">Export CSV</button><button class="btn sm" onclick="window.print()">Print</button>${be('server-side export')}</div>`;
+  let t='';
+  const T=(head,rows)=>`<div class="tbl-wrap"><table id="rep"><tr>${head.map(x=>`<th>${x}</th>`).join('')}</tr>${rows.map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join('')}</tr>`).join('')}</table>${rows.length?'':'<div class="empty">No rows for these filters.</div>'}</div>`;
+  if(tab==='daily'){const L=S.acts.filter(a=>aF(a)&&inR(a.date)).sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time));t=T(['Date','Time','Member','Activity','Customer','Unit','Status','Remarks'],L.map(a=>[fd(a.date),esc(a.time),esc(pname(a.assignee)),esc(atype(a.type).l),esc(cust(a.cust).name),esc(unitLabel(booking(a.booking))),tagStatus(a.status),esc(a.remarks)]));}
+  if(tab==='pending'){const L=S.acts.filter(a=>aF(a)&&openAct(a)&&(dayDiff(a.date)<=0||(a.next&&dayDiff(a.next)<=0))).sort((a,b)=>a.date.localeCompare(b.date));const R=S.reqs.filter(r=>(!mem||r.assignee===mem)&&!['Resolved','Closed'].includes(r.status)&&dayDiff(r.due)<=0);
+    t=T(['Due','Days late','Member','Item','Customer','Unit','Status'],L.map(a=>[fd(a.date),Math.max(0,-dayDiff(a.date)),esc(pname(a.assignee)),esc(atype(a.type).l),esc(cust(a.cust).name),esc(unitLabel(booking(a.booking))),tagStatus(a.status)]).concat(R.map(r=>[fd(r.due),Math.max(0,-dayDiff(r.due)),esc(pname(r.assignee)),'Request '+r.id+' · '+esc(r.cat),esc(cust(r.cust).name),esc(unitLabel(booking(r.booking))),tagStatus(r.status)])));}
+  if(tab==='engage'){const L=S.acts.filter(a=>aF(a)&&isEng(a)&&inR(a.date));t=T(['Member','Engagement type','Planned','Completed','Pending'],MEMBERS.filter(m=>!mem||m===mem).flatMap(m=>ENGAGE.map(k=>{const x=L.filter(a=>a.assignee===m&&a.type===k);return x.length?[esc(pname(m)),esc(atype(k).l),x.length,x.filter(a=>a.status==='Completed').length,x.filter(openAct).length]:null;}).filter(Boolean)));}
+  if(tab==='comm'){const L=S.comms.filter(m=>inR(m.at)&&(!proj||(m.booking&&booking(m.booking).project===proj)));t=T(['Member','Outbound calls','Inbound answered','WhatsApp','Email','Total'],MEMBERS.filter(m=>!mem||m===mem).map(m=>{const x=L.filter(c=>c.by===m);return [esc(pname(m)),x.filter(c=>c.ch==='call'&&c.dir==='out').length,x.filter(c=>c.ch==='call'&&c.dir==='in').length,x.filter(c=>c.ch==='wa').length,x.filter(c=>c.ch==='email').length,x.length];}).concat([['<b>Missed / unhandled</b>','',L.filter(c=>c.status==='Missed').length,'','','']]));}
+  if(tab==='ref'){const L=S.refs.filter(r=>(!mem||r.member===mem)&&(!proj||r.interest===proj));t=T(['Member','Referrals','Shared with Sales','Site visits','Booked','Conversion','Payout paid','Payout in approval'],MEMBERS.filter(m=>!mem||m===mem).map(m=>{const x=L.filter(r=>r.member===m),b=x.filter(r=>r.status==='Booked').length;return [esc(pname(m)),x.length,x.filter(r=>r.status!=='New').length,x.filter(r=>r.siteVisit.status==='Done').length,b,x.length?Math.round(b/x.length*100)+'%':'—',money(x.filter(r=>r.payout.status==='Paid').reduce((s,r)=>s+r.payout.amount,0)),x.filter(r=>['Requested','Verified','Head approved','CSMO approved'].includes(r.payout.status)).length];}));}
+  if(tab==='member'){t=T(['Member','Customers owned','Activities in period','Completed','Overdue now','Comms in period','Requests open','Referrals'],MEMBERS.filter(m=>!mem||m===mem).map(m=>{const a=S.acts.filter(x=>x.assignee===m&&inR(x.date)&&(!proj||booking(x.booking).project===proj));return [esc(pname(m)),S.customers.filter(c=>c.owner===m).length,a.length,a.filter(x=>x.status==='Completed').length,S.acts.filter(x=>x.assignee===m&&openAct(x)&&dayDiff(x.date)<0).length,S.comms.filter(c=>c.by===m&&inR(c.at)).length,S.reqs.filter(r=>r.assignee===m&&!['Resolved','Closed'].includes(r.status)).length,S.refs.filter(r=>r.member===m).length];}));}
+  h+=t; el.innerHTML=h; const g=s=>el.querySelector(s);
+  el.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>setQ('tab',b.dataset.tab));
+  g('#rf').onchange=e=>setQ('from',e.target.value); g('#rto').onchange=e=>setQ('to',e.target.value); if(g('#rm')) g('#rm').onchange=e=>setQ('member',e.target.value); g('#rp').onchange=e=>setQ('project',e.target.value);
+  g('#rx').onclick=()=>tableCSV(g('#rep'),'delight_report_'+tab+'_'+from+'_'+to+'.csv');
+};
+
+/* ===== Settings (admin) ===== */
+PAGES.settings=function(el){
+  let h=pageHeader('Delight settings','Configuration the PMB team would expose to Admin (read-only in the prototype).');
+  h+=`<div class="grid g2"><div class="card"><h3>Activity types &amp; SLA</h3><table><tr><th>Type</th><th>SLA (days late before breach)</th></tr>${ACT_TYPES.map(t=>`<tr><td>${t.ico} ${esc(t.l)}</td><td>${t.sla}</td></tr>`).join('')}</table></div>
+  <div class="card"><h3>WhatsApp templates (Gallabox) ${ui('names TBC')}</h3>${WA_TEMPLATES.map(t=>`<div class="mono" style="padding:3px 0">${t}</div>`).join('')}<div class="muted small">Actual template list to come from the Delight team (MoM §7.4).</div></div></div>`;
+  h+=`<div class="card" style="margin-top:14px"><h3>Role access matrix</h3><div class="tbl-wrap"><table><tr><th>Capability</th><th>Delight Member</th><th>Delight Backend</th><th>Delight Head</th><th>CRM Head / CSMO</th><th>Admin</th></tr>${[
+   ['Landing layer','Working','Working (desk)','Monitoring + Approvals','Monitoring + Approvals','All'],
+   ['See customers','Every customer (default: mine)','Every customer','Every customer','Every customer (read)','Everything'],
+   ['Create / update activities','Own + any customer','Any','Any','—','Any'],
+   ['Activity-specific reassignment','Own activities','Any','Any','—','Any'],
+   ['Temporary cover / owner change','Request','Request','Approve / apply','—','Apply'],
+   ['Register / update requests','Yes','Yes','Yes','—','Yes'],
+   ['Escalate','L1 → L2','L1 → L2','L2 → L3','Receives L3','Any'],
+   ['Capture referral / request payout','Yes','Yes','Yes','—','Yes'],
+   ['Payout chain','—','Verify · mark paid','Approve (step 2)','Approve (final)','Any step'],
+   ['Reports','Own','Team','Team','Team','Team'],
+   ['Settings','—','—','—','—','Yes']].map(r=>`<tr>${r.map((c,i)=>i?`<td class="small">${esc(c)}</td>`:`<td><b>${esc(c)}</b></td>`).join('')}</tr>`).join('')}</table></div></div>`;
+  el.innerHTML=h;
+};
+
+/* ===== Requirement map ===== */
+PAGES.requirements=function(el){
+  const q=ROUTE.q; let L=REQS.slice(); if(q.st) L=L.filter(r=>r.pmb===q.st); if(q.pg) L=L.filter(r=>r.page===q.pg);
+  const fbc=id=>S.feedback.filter(f=>f.req===id).length;
+  const cnt=k=>REQS.filter(r=>r.pmb===k).length;
+  let h=pageHeader('Requirement map','Each proposed function, why it is needed, and what PMB already has (checked read-only in PMB on 10 Nov 2026). Stakeholders can record a decision per line.','<button class="btn sm" id="rqx">Export CSV</button>');
+  h+=`<div class="grid g4">${['AV','EN','NEW','PC'].map(k=>`<div class="kpi" data-go="requirements?st=${k}"><div class="v">${cnt(k)}</div><div class="l">${PMB_LABEL[k]}</div><div class="s">${{AV:'use as is',EN:'extend existing PMB feature',NEW:'build in PMB',PC:'needs a decision or a document'}[k]}</div></div>`).join('')}</div>`;
+  h+=`<div class="filters" style="margin-top:14px"><select class="inp" id="qst">${opts(Object.keys(PMB_LABEL).map(k=>({v:k,l:PMB_LABEL[k]})),q.st||'','All PMB statuses')}</select><select class="inp" id="qpg">${opts([...new Set(REQS.map(r=>r.page))],q.pg||'','All areas')}</select></div>`;
+  h+=`<div class="tbl-wrap"><table id="rqTbl"><tr><th>ID</th><th>Area</th><th>Functionality</th><th>Purpose</th><th>PMB status</th><th>Evidence / note</th><th>Backend work</th><th>Feedback</th><th>Decision</th></tr>${L.map(r=>`<tr><td class="mono">${r.id}</td><td class="small">${esc(r.page)}</td><td><b>${esc(r.f)}</b></td><td class="small">${esc(r.p)}</td><td><span class="tag ${PMB_TAG[r.pmb]}">${PMB_LABEL[r.pmb]}</span></td><td class="small muted">${esc(r.ev)}</td><td class="small">${esc(r.be||'—')}</td><td>${fbc(r.id)?`<a href="#/feedback?req=${r.id}">${fbc(r.id)} 💬</a>`:'—'} <button class="btn sm noexp" data-fbr="${r.id}">+</button></td><td><select class="inp" data-dec="${r.id}">${opts(['Accepted','Needs Changes','Pending Confirmation'],S.decisions[r.id]||'','—')}</select></td></tr>`).join('')}</table></div>`;
+  el.innerHTML=h; const g=s=>el.querySelector(s);
+  g('#qst').onchange=e=>setQ('st',e.target.value); g('#qpg').onchange=e=>setQ('pg',e.target.value);
+  el.querySelectorAll('[data-dec]').forEach(s=>s.onchange=()=>{S.decisions[s.dataset.dec]=s.value; save(); toast(s.dataset.dec+' → '+(s.value||'—'));});
+  el.querySelectorAll('[data-fbr]').forEach(b=>b.onclick=()=>{const r=REQS.find(x=>x.id===b.dataset.fbr);openFeedback({page:r.page,req:r.id});});
+  g('#rqx').onclick=()=>{download('delight_requirement_map.csv','﻿'+csv([['ID','Area','Functionality','Purpose','PMB status','Evidence','Backend work','Decision','Feedback count']].concat(REQS.map(r=>[r.id,r.page,r.f,r.p,PMB_LABEL[r.pmb],r.ev,r.be,S.decisions[r.id]||'',fbc(r.id)]))));};
+};
+
+/* ===== Stakeholder feedback ===== */
+PAGES.feedback=function(el){
+  const q=ROUTE.q; let L=S.feedback.slice().reverse(); if(q.req) L=L.filter(f=>f.req===q.req); if(q.st) L=L.filter(f=>f.status===q.st); if(q.pg) L=L.filter(f=>f.page===q.pg);
+  const c=s=>S.feedback.filter(f=>f.status===s).length;
+  let h=pageHeader('Stakeholder feedback','Comments and decisions captured during demonstrations. Each browser keeps its own copy — export, then import into one browser to consolidate.','<button class="btn pri sm" id="fadd">+ Add feedback</button>');
+  h+=`<div class="grid g4">${kpi(S.feedback.length,'Comments','all pages','feedback')}${kpi(c('Accepted'),'Accepted','','feedback?st=Accepted')}${kpi(c('Needs Changes'),'Needs changes','','feedback?st=Needs Changes',c('Needs Changes')?'amber':'')}${kpi(c('Pending Confirmation'),'Pending confirmation','','feedback?st=Pending Confirmation')}</div>`;
+  h+=`<div class="filters" style="margin-top:14px"><select class="inp" id="fst">${opts(['Accepted','Needs Changes','Pending Confirmation'],q.st||'','All statuses')}</select><select class="inp" id="fpg">${opts([...new Set(S.feedback.map(f=>f.page))],q.pg||'','All pages')}</select>${q.req?`<span class="tag">${esc(q.req)} <a href="#/feedback">✕</a></span>`:''}<span class="grow"></span><button class="btn sm" id="fj">Export JSON</button><button class="btn sm" id="fc">Export CSV</button><label class="btn sm">Import JSON<input type="file" id="fi" accept=".json" style="display:none"></label></div>`;
+  h+=`<div class="tbl-wrap"><table><tr><th>When</th><th>Who</th><th>Page</th><th>Requirement</th><th>Type</th><th>Comment</th><th>Status</th><th></th></tr>${L.map(f=>`<tr><td class="small">${fdt(f.at)}</td><td><b>${esc(f.who)}</b><div class="sub">${esc(f.wrole)}</div></td><td>${esc(f.page)}</td><td class="mono small">${esc(f.req||'—')}</td><td class="small">${esc(f.type)}</td><td style="max-width:360px">${esc(f.comment)}</td><td><select class="inp" data-fs="${f.id}">${opts(['Accepted','Needs Changes','Pending Confirmation'],f.status)}</select></td><td><button class="btn sm danger" data-fd="${f.id}">✕</button></td></tr>`).join('')}</table>${L.length?'':'<div class="empty">No feedback yet — use “💬 Comment on this page” or the Feedback button.</div>'}</div>`;
+  const byReq={}; S.feedback.forEach(f=>{if(f.req){byReq[f.req]=byReq[f.req]||[];byReq[f.req].push(f);}});
+  h+=`<div class="sec-t">Consolidated by requirement</div><div class="tbl-wrap"><table><tr><th>Requirement</th><th>Comments</th><th>Latest status</th><th>Decision on map</th></tr>${Object.entries(byReq).map(([id,fs])=>{const r=REQS.find(x=>x.id===id);return `<tr><td><span class="mono">${id}</span> ${esc(r?r.f:'')}</td><td>${fs.length}</td><td>${(s=>`<span class="tag ${s==='Accepted'?'':s==='Needs Changes'?'red':'amber'}">${esc(s)}</span>`)(fs[fs.length-1].status)}</td><td>${esc(S.decisions[id]||'—')}</td></tr>`;}).join('')||'<tr><td colspan="4" class="empty">—</td></tr>'}</table></div>`;
+  el.innerHTML=h; const g=s=>el.querySelector(s);
+  g('#fadd').onclick=()=>openFeedback({page:'General'});
+  g('#fst').onchange=e=>setQ('st',e.target.value); g('#fpg').onchange=e=>setQ('pg',e.target.value);
+  el.querySelectorAll('[data-fs]').forEach(s=>s.onchange=()=>{const f=S.feedback.find(x=>x.id===s.dataset.fs);f.status=s.value;if(f.req)S.decisions[f.req]=s.value;save();toast('Updated');});
+  el.querySelectorAll('[data-fd]').forEach(b=>b.onclick=()=>{if(!confirm('Delete this feedback item?'))return;S.feedback=S.feedback.filter(x=>x.id!==b.dataset.fd);save();render();});
+  g('#fj').onclick=()=>download('delight_feedback_'+iso(TODAY)+'.json',JSON.stringify({exported:nowStr(),feedback:S.feedback,decisions:S.decisions},null,2),'application/json');
+  g('#fc').onclick=()=>download('delight_feedback_'+iso(TODAY)+'.csv','﻿'+csv([['ID','When','Who','Role','Page','Requirement','Type','Status','Comment','Viewed as']].concat(S.feedback.map(f=>[f.id,f.at,f.who,f.wrole,f.page,f.req,f.type,f.status,f.comment,f.asRole]))));
+  g('#fi').onchange=e=>{const file=e.target.files[0]; if(!file) return; const rd=new FileReader(); rd.onload=()=>{try{const d=JSON.parse(rd.result); const items=d.feedback||d; let n=0; items.forEach(f=>{if(!S.feedback.some(x=>x.id===f.id)){S.feedback.push(f);n++;}}); if(d.decisions) Object.assign(S.decisions,d.decisions); save(); toast(n+' feedback items imported'); render();}catch(err){toast('Not a valid feedback export');}}; rd.readAsText(file);};
+};
+
+/* ===== Dev handover ===== */
+PAGES.handover=function(el){
+  const ui_=REQS.filter(r=>!r.be), bk=REQS.filter(r=>r.be), pc=REQS.filter(r=>r.pmb==='PC');
+  let h=pageHeader('PMB development handover','How to read this prototype as a functional reference once feedback is final.','<button class="btn sm" id="hx">Download handover pack (JSON)</button>');
+  h+=`<div class="card"><h3>Reading the prototype</h3><ul class="small"><li>Turn on <b>Dev notes</b> in the yellow bar: <span class="be" style="display:inline-block">⚙ backend</span> marks behaviour that needs PMB server work; <span class="ui" style="display:inline-block">▣ UI demo</span> marks placeholder content whose rules are still to be confirmed.</li><li>Everything runs in the browser with <b>demo data</b> stored in localStorage. No PMB, MCube, Gallabox, Workhall or ERP API is called. “Call”, “WhatsApp” and “Send wish” only write a demo timeline entry.</li><li>Use <b>View as</b> to switch between Delight Member, Delight Backend, Delight Head, CRM Head / CSMO and Admin. PMB must enforce scope on the server (as it does today: “Scope is enforced by the server on every request”).</li><li>Do not change RM ownership logic. Delight ownership is a separate field.</li></ul></div>`;
+  h+=`<div class="grid g2" style="margin-top:14px"><div class="card"><h3>New data PMB needs</h3><table><tr><th>Entity</th><th>Key fields</th></tr>${[
+   ['Delight ownership','customer, primary_owner, changed_by, changed_at, approval_id'],
+   ['Temporary cover','customer | member scope, covering_member, from, to, reason, approval_id'],
+   ['Delight activity','customer, booking, type, date/time, mode, assignee, status, remarks, next_follow_up, source (PMB / Workhall task id), log[]'],
+   ['Checklist item','activity, item, done, by, at (configurable per type)'],
+   ['JI observation','activity, text, team, status, ERP ticket ref'],
+   ['Customer request (or Ticket extension)','customer, booking, source, category, team, assignee, level, due, status, external_ref, history[]'],
+   ['Referral','referrer customer + booking, prospect name/phone, interest, source, member, sales contact, status, site visit, booking ref/value'],
+   ['Referral payout','referral, amount, status, approval chain, payment ref/date'],
+   ['Approval (extend existing)','type, raised_by, customer, details, steps[role,status,by,at,comment]'],
+   ['Engagement profile','DOB, anniversary, language, preferences (source TBC)']].map(r=>`<tr><td><b>${r[0]}</b></td><td class="small mono">${r[1]}</td></tr>`).join('')}</table></div>
+   <div class="card"><h3>Integrations touched</h3><table><tr><th>System</th><th>Use</th></tr>${[['MCube','Delight extensions 448, 455, 458, 462, 502 → calls on customer timeline (exists)'],['Gallabox','Delight templates, official numbers, registration groups (TBC)'],['Microsoft 365','customerdelight@ shared mailbox (sync reliability — finding CP-016)'],['Workhall','Read Delight tasks (e.g. “First Meet · Execute First meet”) and stages; do not duplicate'],['ERP / customer portal','Ticket references; snag tickets; DOB source (TBC)'],['Sales CRM','Referral hand-off and status (TBC)']].map(r=>`<tr><td><b>${r[0]}</b></td><td class="small">${r[1]}</td></tr>`).join('')}</table></div></div>`;
+  h+=`<div class="grid g2" style="margin-top:14px"><div class="card"><h3>Needs backend (${bk.length})</h3>${bk.map(r=>`<div class="small" style="padding:3px 0"><span class="mono">${r.id}</span> ${esc(r.f)} — <span class="muted">${esc(r.be)}</span></div>`).join('')}</div><div class="card"><h3>Pending confirmation (${pc.length})</h3>${pc.map(r=>`<div class="small" style="padding:3px 0"><span class="mono">${r.id}</span> ${esc(r.f)} — <span class="muted">${esc(r.ev)}</span></div>`).join('')}<h3 style="margin-top:12px">Already in PMB (${ui_.length})</h3>${ui_.map(r=>`<div class="small" style="padding:3px 0"><span class="mono">${r.id}</span> ${esc(r.f)}</div>`).join('')}</div></div>`;
+  el.innerHTML=h;
+  el.querySelector('#hx').onclick=()=>download('delight_handover_pack_'+iso(TODAY)+'.json',JSON.stringify({generated:nowStr(),note:'Functional reference — PMB Delight Team module prototype. Demo data only.',requirements:REQS.map(r=>Object.assign({},r,{pmb_status:PMB_LABEL[r.pmb],decision:S.decisions[r.id]||null,feedback:S.feedback.filter(f=>f.req===r.id)})),general_feedback:S.feedback.filter(f=>!f.req),roles:ROLE_LABEL,activity_types:ACT_TYPES,request_categories:REQ_CATS,referral_statuses:REF_STATUS,payout_statuses:PAY_STATUS},null,2),'application/json');
+};
+
+boot();
+</script>
+</body>
+</html>
