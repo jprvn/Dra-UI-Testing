@@ -2,7 +2,14 @@
 
 Built 2026-11-10. It is a navigable demo of the CRM Delight Team module for PMB (DRA Comms Platform, `drap.powersmy.biz`), styled to match PMB's look. Its purpose is to collect stakeholder feedback before the requirements go to the PMB team. It contains demo data only and connects to no live system.
 
-## Open it
+## Live URL
+
+**https://jprvn.github.io/Dra-UI-Testing/** is public on the internet, with search indexing discouraged. It is an internal prototype with fictional customer data.
+
+Publishing: every push to `main` in `jprvn/Dra-UI-Testing` runs `.github/workflows/pages.yml`. The workflow builds `src/` into one HTML file and redeploys it to the same URL in about a minute. Edit the files in `src/`, never the generated HTML.
+
+## Open it locally
+
 
 Double-click `PMB_Delight_Module_Prototype.html`. It opens in Edge or Chrome as a single file with no install. Fonts load from Google Fonts when online, and the page falls back to system fonts offline.
 
